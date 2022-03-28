@@ -16,23 +16,23 @@ add_filter( 'wp_is_application_passwords_available', '__return_false' );
 
 // OPTIONAL ADDITIONAL JS FILE - just uncomment the row below
 //add_action( 'wp_enqueue_scripts', function() {	wp_enqueue_script('custom', get_stylesheet_directory_uri() . '/js/custom.js', array(/* 'jquery' */), null, true); });
- 
-// OPTIONAL: ADD FONTAWESOME FROM CDN IN FOOTER 
-/* 
-add_action("wp_footer",function(){ ?> <link rel='stylesheet' id='fontawesome-css'  href='https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css' media='all' /> <?php }); 
+
+// OPTIONAL: ADD FONTAWESOME FROM CDN IN FOOTER
+/*
+add_action("wp_footer",function(){ ?> <link rel='stylesheet' id='fontawesome-css'  href='https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css' media='all' /> <?php });
 */
 
 //OPTIONAL: ADD ANOTHER CUSTOM GOOGLE FONT, EXAMPLE: Hanalei Fill
 // After uncommenting the following code, you will also need to set the font in the BS variable. Here's how:
-// Open the WordPress Customizer 
+// Open the WordPress Customizer
 // In the field/s: "Font Family Base" or "Headings Font Family" enter the font name, in this case "Hanalei Fill"
 
 /*
-add_action("wp_head",function(){ ?> 
+add_action("wp_head",function(){ ?>
  <link rel="dns-prefetch" href="//fonts.googleapis.com">
  <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
  <link href="https://fonts.googleapis.com/css?family=Hanalei+Fill" rel="stylesheet">
-<?php }); 
+<?php });
 */
 
 // OPTIONAL: ADD MORE NAV MENUS
@@ -69,3 +69,9 @@ add_filter('lc_load_cpt_lc_block', function (array $blocks) {
     }
     return $blocks;
 }, PHP_INT_MAX);
+
+
+add_theme_support( 'block-templates' );
+add_theme_support( 'wp-block-styles' );
+add_theme_support( 'responsive-embeds' );
+add_theme_support( 'editor-styles' );
