@@ -4,10 +4,8 @@
 // Remember that to customize base color values and main variables, you can just launch the WordPress Customizer.
 
 // SOME EXPERIMENTS for your quick testing:
-//$primary:teal;
+// $primary:teal;
 //$body-bg: darkgrey;
-
-
 
 //SOME CUSTOMIZATION FOR PICOSTRAP & LC
 
@@ -35,12 +33,12 @@ $utilities: (
     property: min-height,
     class: min-vh,
     responsive: true,
-    values: ( 
+    values: (
       25: 25vh,
       50: 50vh,
       75: 75vh,
       100: 100vh,
     )
   ),
-   
+
 );

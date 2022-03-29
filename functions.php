@@ -12,7 +12,7 @@ add_filter( 'wp_is_application_passwords_available', '__return_false' );
 //add_action( 'after_setup_theme', function() { load_child_theme_textdomain( 'picostrap-child', get_stylesheet_directory() . '/languages' ); } );
 
 // OPTIONAL ADDITIONAL CSS FILE - [NOT RECOMMENDED]: USE the /sass folder, add your css code to /sass/_custom.sass
-//add_action( 'wp_enqueue_scripts',  function  () {	wp_enqueue_style( 'custom', get_stylesheet_directory_uri().'/custom.css' ); });
+// add_action( 'wp_enqueue_scripts',  function  () {	wp_enqueue_style( 'custom', get_stylesheet_directory_uri().'/custom.css' ); });
 
 // OPTIONAL ADDITIONAL JS FILE - just uncomment the row below
 //add_action( 'wp_enqueue_scripts', function() {	wp_enqueue_script('custom', get_stylesheet_directory_uri() . '/js/custom.js', array(/* 'jquery' */), null, true); });
@@ -71,7 +71,32 @@ add_filter('lc_load_cpt_lc_block', function (array $blocks) {
 }, PHP_INT_MAX);
 
 
-add_theme_support( 'block-templates' );
-add_theme_support( 'wp-block-styles' );
-add_theme_support( 'responsive-embeds' );
-add_theme_support( 'editor-styles' );
+
+// ADD CLASSES TO BODY TAG
+function wp_body_classes( $classes ) {
+    $classes[] = 'd-flex flex-column h-100';
+
+    return $classes;
+}
+add_filter( 'body_class','wp_body_classes' );
+
+
+/**
+ * Sets up theme defaults and registers support for various WordPress features.
+ */
+
+add_action('init', 'register_gutenberg');
+
+function register_gutenberg() {
+
+    // Enqueue block editor styles.
+    add_theme_support('wp-block-styles');
+    wp_register_style( 'wp-block-styles', get_theme_file_uri( '/assets/css/block-library/style.css' ) );
+    wp_enqueue_style('wp-block-styles');
+
+     // Enqueue editor styles.
+    add_theme_support( 'editor-styles' );
+    wp_register_style( 'editor-styles', get_theme_file_uri( '/assets/css/editor/style.css' ) );
+    wp_enqueue_style('editor-styles');
+
+}

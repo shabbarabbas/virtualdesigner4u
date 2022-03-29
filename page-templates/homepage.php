@@ -1,6 +1,6 @@
 <?php
 /**
- * Template Name:  Shabbar abbas
+ * Template Name:  Home Page
  *
 
  */
@@ -9,19 +9,19 @@ defined( 'ABSPATH' ) || exit;
 
 get_header();
 ?>
-<div class="py-6 bg-info">
+<div class="py-6 bg-primary">
     <div class="container text-center">
         <h1 class="display-4"><?php the_title(); ?></h1>
-        
+
   </div>
 </div>
 
 <div class="container">
     <div class="row">
         <div class="col-md-9 py-5">
-            <?php 
+            <?php
 
-            if ( have_posts() ) : 
+            if ( have_posts() ) :
                 while ( have_posts() ) : the_post();
                     the_content();
                 endwhile;
@@ -32,7 +32,7 @@ get_header();
         </div>
 
         <div class="col-md-3 pt-5">
-            <?php 
+            <?php
             get_sidebar();
             ?>
         </div>
