@@ -39,6 +39,114 @@ HOW TO REFERENCE ASSETS AND IMAGES
 
 @import "inc/nav";
 
+.bg-light {
+    --bs-bg-opacity: 1;
+    background-color: rgb(247, 250, 255);
+}
+
+.bg-grad {
+    background: linear-gradient(150deg, #97c74e 0%, #2ab9a5 100%);
+}
+
+.pattern-overlay-1 {
+    position: relative;
+    z-index: 1;
+    &::before {
+      content: "";
+      background: url(../images/bg/pattern/01.png);
+      background-position: center center;
+      background-repeat: no-repeat;
+      background-size: cover;
+      position: absolute;
+      top: 0;
+      right: 0;
+      left: 0;
+      bottom: 0;
+      z-index: 0;
+    }
+  }
+  .pattern-overlay-2 {
+    position: relative;
+    z-index: 1;
+    &::before {
+      content: "";
+      background: url(../images/bg/pattern/02.png);
+      background-position: center center;
+      background-repeat: no-repeat;
+      background-size: cover;
+      position: absolute;
+      top: 0;
+      right: 0;
+      left: 0;
+      bottom: 0;
+      z-index: 0;
+    }
+  }
+  .pattern-overlay-3 {
+    position: relative;
+    z-index: 1;
+    &::before {
+      content: "";
+      background: url(../images/bg/pattern/03.png);
+      background-position: center center;
+      background-repeat: no-repeat;
+      background-size: cover;
+      position: absolute;
+      top: 0;
+      right: 0;
+      left: 0;
+      bottom: 0;
+      z-index: 0;
+    }
+  }
+  .pattern-overlay-4 {
+    position: relative;
+    z-index: 1;
+    &::before {
+      content: "";
+      background: url(../images/bg/pattern/04.png);
+      background-position: center center;
+      background-repeat: no-repeat;
+      background-size: cover;
+      position: absolute;
+      top: 0;
+      right: 0;
+      left: 0;
+      bottom: 0;
+      z-index: 0;
+    }
+  }
+
+.hero-area{
+    @extend .bg-light;
+}
+
+.content-space-t-lg-5 {
+    padding-top: 8rem!important;
+}
+
+.content-space-b-2 {
+    padding-bottom: 4rem!important;
+}
+
 body.picostrap_header_navbar_position_fixed-top {
-    padding-top: 100px !important;
+    padding-top: 0px !important;
+}
+
+body.scroll-position-at-top #wrapper-navbar .navbar {
+    padding-top: 0rem;
+    padding-bottom: 0rem;
+}
+
+body.scroll-position-not-at-top #wrapper-navbar .navbar {
+    background: rgb(255, 255, 255) !important;
+    box-shadow: 0 0.5rem 1rem rgb(0 0 0 / 15%) !important;
+}
+
+ #logo-tagline-wrap > a > img {
+    transition: all 0.5s ease-out;
+
+}
+body.scroll-position-not-at-top #wrapper-navbar #logo-tagline-wrap > a > img {
+    max-width: 50%  !important;
 }
