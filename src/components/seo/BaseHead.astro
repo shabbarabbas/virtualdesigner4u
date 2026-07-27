@@ -1,0 +1,133 @@
+---
+/**
+ * Document <head>: meta, Open Graph, Twitter cards, canonical URL,
+ * structured data and font preloading.
+ *
+ * Every page routes through this component via BaseLayout, so SEO stays
+ * consistent and there is exactly one place to audit.
+ */
+import { site, seoDefaults, analytics } from '@/config/site';
+import { absoluteUrl, href } from '@/lib/utils';
+import { buildGraph, personSchema, websiteSchema } from '@/lib/schema';
+import type { SeoProps } from '@/types';
+
+interface Props extends SeoProps {
+  /** Extra JSON-LD nodes merged into the page @graph. */
+  schema?: Record<string, unknown>[];
+}
+
+const {
+  title,
+  description = site.description,
+  image = site.ogImage,
+  canonical,
+  noindex = false,
+  type = 'website',
+  publishedTime,
+  modifiedTime,
+  keywords = [],
+  schema = [],
+} = Astro.props;
+
+const origin = Astro.site?.origin ?? site.url;
+
+// Canonical URLs are normalised without a trailing slash (except the root) so
+// that "/about" and "/about/" never compete as separate documents.
+const normalisedPath = Astro.url.pathname.replace(/\/+$/, '') || '/';
+const canonicalUrl = canonical ?? new URL(normalisedPath, origin).href;
+const socialImage = absoluteUrl(image, origin);
+const fullTitle = seoDefaults.titleTemplate(title);
+const metaKeywords = [...new Set([...site.keywords, ...keywords])].join(', ');
+
+// Base identity nodes appear on every page; page-specific nodes are appended.
+const jsonLd = buildGraph([personSchema(origin), websiteSchema(origin), ...schema]);
+---
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<title>{fullTitle}</title>
+<meta name="description" content={description} />
+{metaKeywords && <meta name="keywords" content={metaKeywords} />}
+<meta name="author" content={site.name} />
+<link rel="canonical" href={canonicalUrl} />
+
+{
+  noindex ? (
+    <meta name="robots" content="noindex, nofollow" />
+  ) : (
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+  )
+}
+
+<!-- Theme colour follows the active theme; the inline script below keeps it in sync. -->
+<meta name="theme-color" content={site.themeColor.dark} />
+<meta name="color-scheme" content="dark light" />
+
+<!-- Open Graph -->
+<meta property="og:type" content={type} />
+<meta property="og:site_name" content={site.name} />
+<meta property="og:title" content={fullTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonicalUrl} />
+<meta property="og:image" content={socialImage} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content={title} />
+<meta property="og:locale" content={site.locale} />
+{publishedTime && <meta property="article:published_time" content={publishedTime} />}
+{modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={fullTitle} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={socialImage} />
+{seoDefaults.twitterHandle && <meta name="twitter:creator" content={seoDefaults.twitterHandle} />}
+{seoDefaults.twitterHandle && <meta name="twitter:site" content={seoDefaults.twitterHandle} />}
+
+<!-- Icons — routed through href() so a GitHub Pages base path still resolves -->
+<link rel="icon" href={href('/favicon.svg')} type="image/svg+xml" />
+<link rel="apple-touch-icon" href={href('/apple-touch-icon.png')} />
+<link rel="manifest" href={href('/site.webmanifest')} />
+
+<!-- Feeds & discovery -->
+<link rel="sitemap" type="application/xml" href={href('/sitemap-index.xml')} />
+<link
+  rel="alternate"
+  type="application/rss+xml"
+  title={`${site.name} — Blog`}
+  href={href('/rss.xml')}
+/>
+
+<meta name="generator" content={Astro.generator} />
+
+<!-- Structured data -->
+<script type="application/ld+json" is:inline set:html={jsonLd} />
+
+{
+  analytics.enabled && analytics.scriptSrc && (
+    <script is:inline defer data-domain={analytics.domain} src={analytics.scriptSrc} />
+  )
+}
+
+<!--
+  Theme bootstrap. Must run before paint to avoid a flash of the wrong theme,
+  so it is inlined and blocking rather than deferred.
+-->
+<script is:inline>
+  (function () {
+    try {
+      var stored = localStorage.getItem('theme');
+      var prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+      // Dark is the site default; only honour an explicit choice or a light OS preference.
+      var theme = stored || (prefersLight ? 'light' : 'dark');
+      document.documentElement.setAttribute('data-theme', theme);
+      var meta = document.querySelector('meta[name="theme-color"]');
+      if (meta) meta.setAttribute('content', theme === 'light' ? '#fbf9f6' : '#08090c');
+    } catch (e) {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    }
+  })();
+</script>

@@ -1,0 +1,165 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/sections/PageHeader.astro';
+import Prose from '@/components/ui/Prose.astro';
+
+import { site, contactForm, analytics } from '@/config/site';
+import { personal } from '@/config/personal';
+import { breadcrumbSchema } from '@/lib/schema';
+
+const origin = Astro.site?.origin ?? site.url;
+
+// Shown as "last updated" — bump this whenever the policy text changes.
+const lastUpdated = new Date('2025-01-01');
+const formatted = lastUpdated.toLocaleDateString('en-GB', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+});
+---
+
+<BaseLayout
+  title="Privacy Policy"
+  description={`How ${site.name} collects, uses and protects the small amount of personal data this website handles.`}
+  schema={[breadcrumbSchema(origin, [{ name: 'Privacy Policy', path: '/privacy' }])]}
+>
+  <PageHeader
+    kicker="Legal"
+    title="Privacy *policy*"
+    lead={`Last updated ${formatted}. In short: this site collects as little about you as possible, and never sells anything it does collect.`}
+    breadcrumbs={[{ label: 'Privacy Policy' }]}
+  />
+
+  <section class="section">
+    <div class="shell">
+      <Prose size="lg" class="mx-auto">
+        <h2>Who is responsible for your data</h2>
+        <p>
+          This website is operated by {personal.fullName}, an independent web designer and
+          developer based in {personal.location}. For any question about this policy or the
+          data held about you, contact
+          <a href={`mailto:${personal.email}`}>{personal.email}</a>.
+        </p>
+
+        <h2>What this site collects</h2>
+        <p>
+          This is a static website. There is no user account system, no login, and no
+          database of visitors. Data is only collected in the two situations described below.
+        </p>
+
+        <h3>1. When you submit the contact form</h3>
+        <p>
+          The contact form collects the information you type into it: your name, email
+          address, optionally your company and budget range, the services you select, and
+          your message. This is transmitted to
+          <strong>{contactForm.provider}</strong>, a third-party form-processing service,
+          which forwards it to my inbox.
+        </p>
+        <ul>
+          <li>
+            <strong>Purpose:</strong> to reply to your enquiry and, if we work together,
+            to deliver the project.
+          </li>
+          <li>
+            <strong>Legal basis:</strong> your consent, given by submitting the form,
+            and legitimate interest in responding to business enquiries.
+          </li>
+          <li>
+            <strong>Retention:</strong> enquiry emails are kept for up to 24 months, then
+            deleted. Project correspondence is kept for the duration of the engagement plus
+            six years, where required for tax and legal records.
+          </li>
+          <li>
+            <strong>Sharing:</strong> never sold, rented or added to a marketing list.
+          </li>
+        </ul>
+
+        <h3>2. Analytics</h3>
+        {
+          analytics.enabled ? (
+            <p>
+              This site uses a privacy-focused analytics service that measures page views
+              without cookies and without collecting personal data or building cross-site
+              profiles. No individual visitor can be identified from it, and no data is
+              shared with advertising networks.
+            </p>
+          ) : (
+            <p>
+              Analytics are currently <strong>disabled</strong>. This site sets no
+              analytics cookies and runs no third-party tracking scripts. If that changes,
+              this policy will be updated before any tracking is enabled.
+            </p>
+          )
+        }
+
+        <h2>Cookies and local storage</h2>
+        <p>
+          No tracking or advertising cookies are used. The only thing stored in your browser
+          is a single <code>localStorage</code> entry named <code>theme</code>, which
+          remembers whether you chose light or dark mode. It contains no personal data, is
+          never transmitted anywhere, and clearing your browser storage removes it.
+        </p>
+
+        <h2>Third-party services</h2>
+        <p>
+          Keeping the site fast also keeps it private — there are very few external
+          dependencies:
+        </p>
+        <ul>
+          <li>
+            <strong>Hosting:</strong> pages are served as static files. Your hosting
+            provider may keep standard server access logs (IP address, user agent,
+            requested URL) for security and diagnostics.
+          </li>
+          <li>
+            <strong>Form processing:</strong> {contactForm.provider} receives contact form
+            submissions. Refer to their own privacy policy for their retention practices.
+          </li>
+          <li>
+            <strong>Fonts:</strong> all typefaces are self-hosted. No requests are made to
+            Google Fonts or any other font CDN, so no data leaves the site to load them.
+          </li>
+        </ul>
+
+        <h2>Your rights</h2>
+        <p>
+          If you are in the UK, EU or another region with comparable data protection law,
+          you have the right to request access to the personal data held about you, ask for
+          it to be corrected or deleted, object to its processing, and request a copy in a
+          portable format. Email
+          <a href={`mailto:${personal.email}`}>{personal.email}</a> and I will respond
+          within 30 days. There is no charge for these requests.
+        </p>
+
+        <h2>Children</h2>
+        <p>
+          This site is aimed at businesses and is not directed at children under 16. No
+          data is knowingly collected from children. Educational games built for clients are
+          governed by that client's own privacy policy, not this one.
+        </p>
+
+        <h2>Security</h2>
+        <p>
+          The site is served over HTTPS. Because it is fully static, there is no
+          server-side application or database to compromise. Contact form data is
+          transmitted over an encrypted connection to the form provider.
+        </p>
+
+        <h2>Changes to this policy</h2>
+        <p>
+          If this policy changes materially, the "last updated" date at the top of this page
+          will change with it. Continued use of the site after an update means you accept
+          the revised policy.
+        </p>
+
+        <h2>Contact</h2>
+        <p>
+          Questions, corrections or complaints:
+          <a href={`mailto:${personal.email}`}>{personal.email}</a>. If you are in the UK
+          and unhappy with how a request was handled, you may also complain to the
+          Information Commissioner's Office.
+        </p>
+      </Prose>
+    </div>
+  </section>
+</BaseLayout>

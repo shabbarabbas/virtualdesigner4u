@@ -1,0 +1,413 @@
+---
+/**
+ * Contact form.
+ *
+ * Provider-agnostic: the hidden fields required by each service are emitted
+ * from `contactForm.provider` in src/config/site.ts, so switching from
+ * Web3Forms to Formspree/FormSubmit is a one-line change.
+ *
+ * Submission is progressively enhanced — without JavaScript the form posts
+ * normally to the provider; with JavaScript it posts via fetch and shows
+ * inline status without a page navigation.
+ */
+import Icon from '@/components/ui/Icon.astro';
+import Button from '@/components/ui/Button.astro';
+import { site, contactForm } from '@/config/site';
+import { personal } from '@/config/personal';
+import { services as serviceOptions } from '@/config/contact-options';
+
+const { provider, endpoint, subjectPrefix, successPath, honeypot } = contactForm;
+
+// Each provider expects a different action URL and set of control fields.
+const action =
+  provider === 'web3forms'
+    ? 'https://api.web3forms.com/submit'
+    : provider === 'formsubmit'
+      ? `https://formsubmit.co/${endpoint}`
+      : endpoint;
+
+const successUrl = new URL(successPath, site.url).href;
+---
+
+<form
+  id="contact-form"
+  class="card flex flex-col gap-6 p-6 sm:p-8"
+  action={action}
+  method="POST"
+  data-provider={provider}
+  novalidate
+>
+  <!-- Provider control fields -->
+  {provider === 'web3forms' && <input type="hidden" name="access_key" value={endpoint} />}
+  {provider === 'formsubmit' && <input type="hidden" name="_template" value="table" />}
+  {provider === 'formsubmit' && <input type="hidden" name="_captcha" value="false" />}
+  {provider === 'formsubmit' && <input type="hidden" name="_next" value={successUrl} />}
+  {provider === 'formspree' && <input type="hidden" name="_subject" value={subjectPrefix} />}
+  <input type="hidden" name="subject" value={subjectPrefix} />
+  <input type="hidden" name="from_name" value={site.name} />
+
+  <!--
+    Honeypot: hidden from humans and assistive tech, irresistible to bots.
+    Web3Forms and FormSubmit both reject submissions where this is filled.
+  -->
+  <div class="hidden" aria-hidden="true">
+    <label for="botcheck">Leave this field empty</label>
+    <input id="botcheck" type="checkbox" name={honeypot} tabindex="-1" autocomplete="off" />
+  </div>
+
+  <div class="grid gap-5 sm:grid-cols-2">
+    <div class="field">
+      <label for="name" class="label">
+        Your name <span class="req" aria-hidden="true">*</span>
+      </label>
+      <input
+        id="name"
+        name="name"
+        type="text"
+        required
+        autocomplete="name"
+        placeholder="Jane Cooper"
+        class="input"
+        aria-describedby="name-error"
+      />
+      <p id="name-error" class="error" data-error hidden></p>
+    </div>
+
+    <div class="field">
+      <label for="email" class="label">
+        Email <span class="req" aria-hidden="true">*</span>
+      </label>
+      <input
+        id="email"
+        name="email"
+        type="email"
+        required
+        autocomplete="email"
+        placeholder="jane@company.com"
+        class="input"
+        aria-describedby="email-error"
+      />
+      <p id="email-error" class="error" data-error hidden></p>
+    </div>
+  </div>
+
+  <div class="grid gap-5 sm:grid-cols-2">
+    <div class="field">
+      <label for="company" class="label">Company <span class="opt">(optional)</span></label>
+      <input
+        id="company"
+        name="company"
+        type="text"
+        autocomplete="organization"
+        placeholder="Acme Ltd."
+        class="input"
+      />
+    </div>
+
+    <div class="field">
+      <label for="budget" class="label">Budget range <span class="opt">(optional)</span></label>
+      <div class="select-wrap">
+        <select id="budget" name="budget" class="input appearance-none pr-10">
+          <option value="">Prefer not to say</option>
+          <option>Under $1,000</option>
+          <option>$1,000 – $3,000</option>
+          <option>$3,000 – $7,000</option>
+          <option>$7,000 – $15,000</option>
+          <option>$15,000+</option>
+        </select>
+        <Icon name="chevron-down" size={16} class="select-icon" />
+      </div>
+    </div>
+  </div>
+
+  <fieldset class="field">
+    <legend class="label mb-3">What do you need help with?</legend>
+    <div class="flex flex-wrap gap-2">
+      {
+        serviceOptions.map((option) => (
+          <label class="chip">
+            <input type="checkbox" name="services" value={option} class="sr-only" />
+            <span>{option}</span>
+          </label>
+        ))
+      }
+    </div>
+  </fieldset>
+
+  <div class="field">
+    <label for="message" class="label">
+      Project details <span class="req" aria-hidden="true">*</span>
+    </label>
+    <textarea
+      id="message"
+      name="message"
+      rows="6"
+      required
+      minlength="20"
+      placeholder="What are you building, who is it for, and what does success look like? Links to references or your current site help a lot."
+      class="input resize-y"
+      aria-describedby="message-error message-hint"></textarea>
+    <p id="message-hint" class="hint">
+      The more context you share, the more useful my first reply will be.
+    </p>
+    <p id="message-error" class="error" data-error hidden></p>
+  </div>
+
+  <div class="flex flex-col gap-4 border-t border-line pt-6 sm:flex-row sm:items-center sm:justify-between">
+    <p class="flex items-center gap-2 text-[0.8rem] text-subtle">
+      <Icon name="shield" size={14} class="shrink-0 text-second" />
+      Your details are only used to reply. No lists, no sharing.
+    </p>
+
+    <Button type="submit" size="lg" icon="arrow-right" class="shrink-0">
+      <span data-submit-label>Send message</span>
+    </Button>
+  </div>
+
+  <!-- Live region: announces success/failure without stealing focus abruptly. -->
+  <p
+    class="status"
+    data-status
+    role="status"
+    aria-live="polite"
+    hidden
+  >
+  </p>
+
+  <noscript>
+    <p class="text-[0.82rem] text-subtle">
+      JavaScript is disabled — submitting will open a confirmation page. You can also email
+      <a href={`mailto:${personal.email}`} class="text-accent underline">{personal.email}</a>.
+    </p>
+  </noscript>
+</form>
+
+<style>
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-width: 0;
+  }
+
+  .label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--c-text);
+    letter-spacing: 0.01em;
+  }
+
+  .req {
+    color: var(--c-accent);
+  }
+
+  .opt,
+  .hint {
+    font-weight: 400;
+    font-size: 0.76rem;
+    color: var(--c-text-subtle);
+  }
+
+  .input {
+    width: 100%;
+    border-radius: 0.75rem;
+    border: 1px solid var(--c-line);
+    background: var(--c-canvas-alt);
+    padding: 0.7rem 0.9rem;
+    font-size: 0.92rem;
+    color: var(--c-text);
+    transition:
+      border-color var(--dur-fast) ease,
+      box-shadow var(--dur-fast) ease,
+      background-color var(--dur-fast) ease;
+  }
+
+  .input::placeholder {
+    color: var(--c-text-subtle);
+  }
+
+  .input:focus {
+    outline: none;
+    border-color: var(--c-accent);
+    background: var(--c-surface);
+    box-shadow: 0 0 0 3px var(--c-accent-ring);
+  }
+  /* Only flag invalid fields after a submit attempt, never while typing. */
+  .input[aria-invalid='true'] {
+    border-color: var(--c-danger);
+  }
+
+  .error {
+    font-size: 0.76rem;
+    color: var(--c-danger);
+  }
+
+  .select-wrap {
+    position: relative;
+  }
+
+  .select-icon {
+    position: absolute;
+    right: 0.85rem;
+    top: 50%;
+    translate: 0 -50%;
+    pointer-events: none;
+    color: var(--c-text-subtle);
+  }
+
+  .chip {
+    cursor: pointer;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--c-line);
+    background: var(--c-canvas-alt);
+    padding: 0.42rem 0.9rem;
+    font-size: 0.82rem;
+    color: var(--c-text-muted);
+    transition:
+      border-color var(--dur-fast) ease,
+      background-color var(--dur-fast) ease,
+      color var(--dur-fast) ease;
+  }
+
+  .chip:hover {
+    border-color: var(--c-line-strong);
+    color: var(--c-text);
+  }
+
+  /* :has() lets the label style itself from the nested checkbox state. */
+  .chip:has(input:checked) {
+    background: var(--c-accent-soft);
+    border-color: var(--c-accent);
+    color: var(--c-accent);
+  }
+
+  .chip:has(input:focus-visible) {
+    outline: 2px solid var(--c-accent);
+    outline-offset: 2px;
+  }
+
+  .status {
+    border-radius: 0.75rem;
+    border: 1px solid var(--c-line);
+    padding: 0.85rem 1rem;
+    font-size: 0.88rem;
+  }
+
+  .status[data-tone='success'] {
+    border-color: color-mix(in oklab, var(--c-success) 45%, transparent);
+    background: color-mix(in oklab, var(--c-success) 12%, transparent);
+    color: var(--c-text);
+  }
+
+  .status[data-tone='error'] {
+    border-color: color-mix(in oklab, var(--c-danger) 45%, transparent);
+    background: color-mix(in oklab, var(--c-danger) 12%, transparent);
+    color: var(--c-text);
+  }
+</style>
+
+<script>
+  function initContactForm() {
+    const form = document.querySelector<HTMLFormElement>('#contact-form');
+    if (!form || form.dataset.bound === 'true') return;
+    form.dataset.bound = 'true';
+
+    const statusEl = form.querySelector<HTMLElement>('[data-status]');
+    const submitBtn = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+    const label = form.querySelector<HTMLElement>('[data-submit-label]');
+    const provider = form.dataset.provider;
+
+    /** Show a message in the live region. */
+    function setStatus(message: string, tone: 'success' | 'error') {
+      if (!statusEl) return;
+      statusEl.textContent = message;
+      statusEl.dataset.tone = tone;
+      statusEl.hidden = false;
+    }
+
+    /** Attach or clear a validation message for one control. */
+    function setFieldError(field: HTMLInputElement | HTMLTextAreaElement, message: string) {
+      const target = document.getElementById(`${field.id}-error`);
+      field.setAttribute('aria-invalid', message ? 'true' : 'false');
+      if (!target) return;
+      target.textContent = message;
+      target.hidden = !message;
+    }
+
+    function validate(): boolean {
+      const fields = form!.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>(
+        'input[required], textarea[required]',
+      );
+      let firstInvalid: HTMLElement | null = null;
+
+      fields.forEach((field) => {
+        const valid = field.checkValidity();
+        setFieldError(field, valid ? '' : field.validationMessage);
+        if (!valid && !firstInvalid) firstInvalid = field;
+      });
+
+      if (firstInvalid) (firstInvalid as HTMLElement).focus();
+      return !firstInvalid;
+    }
+
+    // Clear an error as soon as the user fixes the field.
+    form.addEventListener('input', (event) => {
+      const field = event.target as HTMLInputElement | HTMLTextAreaElement;
+      if (field.matches('[aria-invalid="true"]') && field.checkValidity()) {
+        setFieldError(field, '');
+      }
+    });
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      if (!validate()) {
+        setStatus('Please fix the highlighted fields and try again.', 'error');
+        return;
+      }
+
+      const data = new FormData(form);
+
+      // Multiple checkboxes arrive as repeated keys; collapse to one string.
+      const chosen = data.getAll('services');
+      if (chosen.length) {
+        data.delete('services');
+        data.set('services', chosen.join(', '));
+      }
+
+      submitBtn?.setAttribute('disabled', 'true');
+      if (label) label.textContent = 'Sending…';
+      if (statusEl) statusEl.hidden = true;
+
+      try {
+        const response = await fetch(form.action, {
+          method: 'POST',
+          body: provider === 'formspree' ? data : JSON.stringify(Object.fromEntries(data)),
+          headers:
+            provider === 'formspree'
+              ? { Accept: 'application/json' }
+              : { 'Content-Type': 'application/json', Accept: 'application/json' },
+        });
+
+        if (!response.ok) throw new Error(`Request failed with status ${response.status}`);
+
+        form.reset();
+        form.querySelectorAll('[data-error]').forEach((el) => ((el as HTMLElement).hidden = true));
+        setStatus(
+          'Thanks — your message is on its way. I reply to every enquiry, usually within one business day.',
+          'success',
+        );
+      } catch {
+        setStatus(
+          'Something went wrong sending the form. Please email hello@virtualdesigner4u.com directly and I will pick it up straight away.',
+          'error',
+        );
+      } finally {
+        submitBtn?.removeAttribute('disabled');
+        if (label) label.textContent = 'Send message';
+      }
+    });
+  }
+
+  initContactForm();
+  document.addEventListener('astro:page-load', initContactForm);
+</script>

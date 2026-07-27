@@ -1,0 +1,176 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/sections/PageHeader.astro';
+import CTASection from '@/components/sections/CTASection.astro';
+import ProjectCard from '@/components/cards/ProjectCard.astro';
+import Icon from '@/components/ui/Icon.astro';
+
+import { getProjects, getProjectCategories } from '@/lib/content';
+import { site } from '@/config/site';
+import { breadcrumbSchema } from '@/lib/schema';
+
+const origin = Astro.site?.origin ?? site.url;
+const projects = await getProjects();
+const categories = await getProjectCategories();
+
+// Counts drive the filter labels so an empty category can never be offered.
+const counts = new Map<string, number>();
+for (const project of projects) {
+  counts.set(project.data.category, (counts.get(project.data.category) ?? 0) + 1);
+}
+---
+
+<BaseLayout
+  title="Portfolio"
+  description="Selected web design, web development, WordPress and HTML5 game projects — each with the problem, the approach and the measured results."
+  schema={[breadcrumbSchema(origin, [{ name: 'Portfolio', path: '/portfolio' }])]}
+>
+  <PageHeader
+    kicker="Portfolio"
+    title="Case studies, not *screenshots*"
+    lead="Each project below documents what was broken, what I changed, and what happened afterwards. Filter by the kind of work you are looking for."
+    breadcrumbs={[{ label: 'Portfolio' }]}
+  />
+
+  <section class="section" aria-labelledby="work-heading">
+    <div class="shell">
+      <h2 id="work-heading" class="sr-only">Projects</h2>
+
+      <!-- ── Filters ────────────────────────────────────────────── -->
+      <div
+        class="mb-10 flex flex-wrap items-center gap-2"
+        role="group"
+        aria-label="Filter projects by category"
+        data-filters
+      >
+        <button type="button" class="filter is-active" data-filter="all" aria-pressed="true">
+          All
+          <span class="count">{projects.length}</span>
+        </button>
+
+        {
+          categories.map((category) => (
+            <button type="button" class="filter" data-filter={category} aria-pressed="false">
+              {category}
+              <span class="count">{counts.get(category)}</span>
+            </button>
+          ))
+        }
+      </div>
+
+      <!-- ── Grid ───────────────────────────────────────────────── -->
+      <div class="grid gap-6 md:grid-cols-2" data-project-grid>
+        {projects.map((project, i) => <ProjectCard project={project} delay={(i % 4) * 80} />)}
+      </div>
+
+      <!-- Shown by script when a filter matches nothing. -->
+      <p
+        class="hidden flex-col items-center gap-3 py-20 text-center text-muted"
+        data-empty
+        role="status"
+      >
+        <Icon name="search" size={28} class="text-subtle" />
+        <span>No projects in that category yet — try another filter.</span>
+      </p>
+    </div>
+  </section>
+
+  <CTASection
+    title="Your project could be *next*"
+    lead="Tell me what you are building. I will tell you honestly whether I am the right person for it."
+  />
+</BaseLayout>
+
+<style>
+  .filter {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--c-line);
+    background: var(--c-surface);
+    padding: 0.45rem 1rem;
+    font-size: 0.85rem;
+    color: var(--c-text-muted);
+    cursor: pointer;
+    transition:
+      color var(--dur-fast) ease,
+      border-color var(--dur-fast) ease,
+      background-color var(--dur-fast) ease;
+  }
+
+  .filter:hover {
+    color: var(--c-text);
+    border-color: var(--c-line-strong);
+  }
+
+  .filter.is-active {
+    background: var(--c-accent);
+    border-color: var(--c-accent);
+    color: var(--c-accent-contrast);
+    font-weight: 600;
+  }
+
+  .count {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    opacity: 0.7;
+  }
+
+  /* Hidden cards are removed from layout and the a11y tree. */
+  [data-project-grid] > [hidden] {
+    display: none;
+  }
+</style>
+
+<script>
+  function initFilters() {
+    const bar = document.querySelector<HTMLElement>('[data-filters]');
+    const grid = document.querySelector<HTMLElement>('[data-project-grid]');
+    const empty = document.querySelector<HTMLElement>('[data-empty]');
+    if (!bar || !grid) return;
+
+    const buttons = [...bar.querySelectorAll<HTMLButtonElement>('.filter')];
+    const cards = [...grid.querySelectorAll<HTMLElement>('[data-category]')];
+
+    function apply(value: string, pushState = true) {
+      let visible = 0;
+
+      cards.forEach((card) => {
+        const match = value === 'all' || card.dataset.category === value;
+        card.hidden = !match;
+        if (match) visible += 1;
+      });
+
+      buttons.forEach((button) => {
+        const active = button.dataset.filter === value;
+        button.classList.toggle('is-active', active);
+        button.setAttribute('aria-pressed', String(active));
+      });
+
+      if (empty) {
+        empty.classList.toggle('hidden', visible > 0);
+        empty.classList.toggle('flex', visible === 0);
+      }
+
+      // Keep the filter shareable and back-button friendly.
+      if (pushState) {
+        const url = new URL(window.location.href);
+        if (value === 'all') url.searchParams.delete('category');
+        else url.searchParams.set('category', value);
+        history.replaceState(null, '', url);
+      }
+    }
+
+    buttons.forEach((button) => {
+      button.addEventListener('click', () => apply(button.dataset.filter ?? 'all'));
+    });
+
+    // Restore the filter from the URL on load (e.g. a shared link).
+    const initial = new URL(window.location.href).searchParams.get('category');
+    if (initial && buttons.some((b) => b.dataset.filter === initial)) apply(initial, false);
+  }
+
+  initFilters();
+  document.addEventListener('astro:page-load', initFilters);
+</script>

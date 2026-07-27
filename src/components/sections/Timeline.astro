@@ -1,0 +1,104 @@
+---
+/** Vertical career timeline with a gradient spine. */
+import Icon from '@/components/ui/Icon.astro';
+import Tag from '@/components/ui/Tag.astro';
+import type { ExperienceItem } from '@/types';
+
+interface Props {
+  items: ExperienceItem[];
+  /** Condensed mode hides highlights — used on the About page. */
+  compact?: boolean;
+}
+
+const { items, compact = false } = Astro.props;
+---
+
+<ol class="timeline relative flex flex-col gap-10">
+  {
+    items.map((item, i) => (
+      <li class="relative pl-10 sm:pl-14" data-reveal style={`--reveal-delay:${i * 90}ms`}>
+        <!-- Node -->
+        <span
+          class:list={[
+            'absolute left-0 top-1.5 grid h-7 w-7 place-items-center rounded-full border-2 sm:h-9 sm:w-9',
+            item.current
+              ? 'border-accent bg-accent text-accent-contrast animate-pulse-ring'
+              : 'border-line-strong bg-surface text-subtle',
+          ]}
+          aria-hidden="true"
+        >
+          <Icon name={item.current ? 'zap' : 'briefcase'} size={14} />
+        </span>
+
+        <article class="flex flex-col gap-3">
+          <header class="flex flex-col gap-1.5">
+            <div class="flex flex-wrap items-center gap-x-3 gap-y-1.5">
+              <time class="font-mono text-[0.72rem] uppercase tracking-[0.14em] text-accent">
+                {item.start} — {item.end}
+              </time>
+              {item.current && <Tag variant="accent">Current</Tag>}
+            </div>
+
+            <h3 class="text-h3 font-display text-body">{item.role}</h3>
+
+            <p class="text-[0.88rem] text-muted">
+              <span class="font-medium text-body">{item.company}</span>
+              {item.location && (
+                <>
+                  <span class="text-line-strong"> · </span>
+                  {item.location}
+                </>
+              )}
+            </p>
+          </header>
+
+          <p class="text-[0.94rem] leading-relaxed text-muted">{item.summary}</p>
+
+          {!compact && item.highlights.length > 0 && (
+            <ul class="flex flex-col gap-2 pt-1">
+              {item.highlights.map((highlight) => (
+                <li class="flex items-start gap-2.5 text-[0.88rem] leading-relaxed text-muted">
+                  <Icon name="check" size={15} class="mt-0.5 shrink-0 text-second" />
+                  <span>{highlight}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+
+          {item.stack.length > 0 && (
+            <div class="flex flex-wrap gap-2 pt-1.5">
+              {item.stack.map((tech) => (
+                <Tag>{tech}</Tag>
+              ))}
+            </div>
+          )}
+        </article>
+      </li>
+    ))
+  }
+</ol>
+
+<style>
+  /* Spine fades out at both ends so it never looks cut off. */
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 0.875rem;
+    top: 0.5rem;
+    bottom: 1rem;
+    width: 1px;
+    background: linear-gradient(
+      180deg,
+      transparent,
+      var(--c-line-strong) 8%,
+      var(--c-line-strong) 88%,
+      transparent
+    );
+  }
+
+  @media (min-width: 640px) {
+    .timeline::before {
+      left: 1.125rem;
+    }
+  }
+</style>

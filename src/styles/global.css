@@ -1,0 +1,642 @@
+/* ==========================================================================
+   Design system — "Workshop After Dark"
+   --------------------------------------------------------------------------
+   A near-black studio canvas lit by two signature accents: Ember (warm amber,
+   for craft + creativity) and Ion (cool teal, for trust + precision). Every
+   colour is exposed as a semantic token so the light theme is a pure token
+   swap — components never hard-code a palette value.
+   ========================================================================== */
+
+@import 'tailwindcss';
+
+/* Class-free theming: the toggle sets data-theme on <html>. */
+@custom-variant dark ([data-theme='dark'] &);
+@custom-variant light ([data-theme='light'] &);
+
+/* --------------------------------------------------------------------------
+   1. Raw palette + semantic tokens (dark is the default theme)
+   -------------------------------------------------------------------------- */
+:root {
+  color-scheme: dark;
+
+  /* Brand ramps — identical across themes, referenced by semantic tokens. */
+  --ember-100: #fff2df;
+  --ember-200: #ffe0ba;
+  --ember-300: #ffc98c;
+  --ember-400: #ffb86b;
+  --ember-500: #f79c43;
+  --ember-600: #d97b23;
+  --ember-700: #a85a15;
+  --ember-800: #75400f;
+
+  --ion-100: #d6fff7;
+  --ion-200: #a5f6e8;
+  --ion-300: #6feede;
+  --ion-400: #43dcc8;
+  --ion-500: #1fbcaa;
+  --ion-600: #109385;
+  --ion-700: #0c7167;
+  --ion-800: #084f48;
+
+  /* Surfaces */
+  --c-canvas: #08090c;
+  --c-canvas-alt: #0b0d12;
+  --c-surface: #101319;
+  --c-surface-raised: #161a22;
+  --c-overlay: rgb(255 255 255 / 0.04);
+  --c-overlay-strong: rgb(255 255 255 / 0.08);
+
+  /* Text */
+  --c-text: #f2f4f8;
+  --c-text-muted: #a5adbd;
+  --c-text-subtle: #6f7889;
+  --c-text-inverse: #08090c;
+
+  /* Lines */
+  --c-line: rgb(255 255 255 / 0.09);
+  --c-line-strong: rgb(255 255 255 / 0.16);
+
+  /* Accents */
+  --c-accent: var(--ember-400);
+  --c-accent-hover: var(--ember-300);
+  --c-accent-contrast: #1a0e02;
+  --c-accent-soft: rgb(255 184 107 / 0.14);
+  --c-accent-ring: rgb(255 184 107 / 0.4);
+
+  --c-second: var(--ion-300);
+  --c-second-soft: rgb(111 238 222 / 0.12);
+
+  /* Feedback */
+  --c-success: #5bd6a0;
+  --c-danger: #ff7a7a;
+
+  /* Glass */
+  --c-glass: rgb(18 21 28 / 0.62);
+  --c-glass-line: rgb(255 255 255 / 0.1);
+
+  /* Elevation — layered, tinted shadows read as "premium" far better than
+     a single flat drop shadow. */
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.4);
+  --shadow-md: 0 2px 4px rgb(0 0 0 / 0.3), 0 8px 24px rgb(0 0 0 / 0.35);
+  --shadow-lg: 0 4px 8px rgb(0 0 0 / 0.3), 0 16px 48px rgb(0 0 0 / 0.45);
+  --shadow-glow: 0 0 0 1px var(--c-accent-ring), 0 12px 40px rgb(255 184 107 / 0.18);
+
+  /* Motion */
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --dur-fast: 140ms;
+  --dur-base: 260ms;
+  --dur-slow: 520ms;
+
+  /* Layout */
+  --header-h: 4.5rem;
+  --gutter: clamp(1.25rem, 5vw, 3.5rem);
+}
+
+[data-theme='light'] {
+  color-scheme: light;
+
+  --c-canvas: #fbf9f6;
+  --c-canvas-alt: #f4f1ec;
+  --c-surface: #ffffff;
+  --c-surface-raised: #ffffff;
+  --c-overlay: rgb(16 19 25 / 0.035);
+  --c-overlay-strong: rgb(16 19 25 / 0.07);
+
+  --c-text: #14161c;
+  --c-text-muted: #55606f;
+  --c-text-subtle: #7c8595;
+  --c-text-inverse: #ffffff;
+
+  --c-line: rgb(16 19 25 / 0.1);
+  --c-line-strong: rgb(16 19 25 / 0.18);
+
+  /* Darker accent ramp keeps AA contrast on a light canvas. */
+  --c-accent: var(--ember-700);
+  --c-accent-hover: var(--ember-800);
+  --c-accent-contrast: #ffffff;
+  --c-accent-soft: rgb(168 90 21 / 0.1);
+  --c-accent-ring: rgb(168 90 21 / 0.35);
+
+  --c-second: var(--ion-700);
+  --c-second-soft: rgb(12 113 103 / 0.1);
+
+  --c-success: #0f7a52;
+  --c-danger: #b3261e;
+
+  --c-glass: rgb(255 255 255 / 0.72);
+  --c-glass-line: rgb(16 19 25 / 0.08);
+
+  --shadow-sm: 0 1px 2px rgb(16 19 25 / 0.06);
+  --shadow-md: 0 2px 4px rgb(16 19 25 / 0.05), 0 8px 24px rgb(16 19 25 / 0.08);
+  --shadow-lg: 0 4px 8px rgb(16 19 25 / 0.05), 0 18px 48px rgb(16 19 25 / 0.12);
+  --shadow-glow: 0 0 0 1px var(--c-accent-ring), 0 12px 40px rgb(168 90 21 / 0.14);
+}
+
+/* --------------------------------------------------------------------------
+   2. Expose tokens to Tailwind as utilities (bg-surface, text-muted, …)
+   `inline` keeps the var reference live so theme switching works at runtime.
+   -------------------------------------------------------------------------- */
+@theme inline {
+  --color-canvas: var(--c-canvas);
+  --color-canvas-alt: var(--c-canvas-alt);
+  --color-surface: var(--c-surface);
+  --color-raised: var(--c-surface-raised);
+  --color-overlay: var(--c-overlay);
+  --color-overlay-strong: var(--c-overlay-strong);
+
+  --color-body: var(--c-text);
+  --color-muted: var(--c-text-muted);
+  --color-subtle: var(--c-text-subtle);
+  --color-inverse: var(--c-text-inverse);
+
+  --color-line: var(--c-line);
+  --color-line-strong: var(--c-line-strong);
+
+  --color-accent: var(--c-accent);
+  --color-accent-hover: var(--c-accent-hover);
+  --color-accent-contrast: var(--c-accent-contrast);
+  --color-accent-soft: var(--c-accent-soft);
+
+  --color-second: var(--c-second);
+  --color-second-soft: var(--c-second-soft);
+
+  --color-success: var(--c-success);
+  --color-danger: var(--c-danger);
+
+  --color-glass: var(--c-glass);
+  --color-glass-line: var(--c-glass-line);
+
+  --font-display: 'Bricolage Grotesque Variable', 'Bricolage Grotesque', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Manrope Variable', 'Manrope', ui-sans-serif, system-ui, sans-serif;
+  --font-serif: 'Instrument Serif', ui-serif, Georgia, serif;
+  --font-mono: ui-monospace, 'SF Mono', 'JetBrains Mono', 'Fira Code', monospace;
+
+  --shadow-soft: var(--shadow-sm);
+  --shadow-card: var(--shadow-md);
+  --shadow-float: var(--shadow-lg);
+  --shadow-ember: var(--shadow-glow);
+
+  --ease-quint: var(--ease-out-quint);
+  --ease-bounce: var(--ease-spring);
+
+  --radius-card: 1.125rem;
+  --radius-pill: 999px;
+
+  /* Fluid type scale — clamp() removes the need for breakpoint overrides. */
+  --text-display: clamp(2.75rem, 1.6rem + 5.2vw, 6rem);
+  --text-display--line-height: 0.94;
+  --text-display--letter-spacing: -0.035em;
+  --text-h1: clamp(2.25rem, 1.5rem + 3.2vw, 4rem);
+  --text-h1--line-height: 1.03;
+  --text-h1--letter-spacing: -0.03em;
+  --text-h2: clamp(1.75rem, 1.3rem + 1.9vw, 2.75rem);
+  --text-h2--line-height: 1.1;
+  --text-h2--letter-spacing: -0.024em;
+  --text-h3: clamp(1.3rem, 1.15rem + 0.7vw, 1.75rem);
+  --text-h3--line-height: 1.2;
+  --text-h3--letter-spacing: -0.018em;
+  --text-lead: clamp(1.05rem, 0.98rem + 0.4vw, 1.3rem);
+  --text-lead--line-height: 1.6;
+
+  --breakpoint-3xl: 96rem;
+}
+
+/* --------------------------------------------------------------------------
+   3. Base layer
+   -------------------------------------------------------------------------- */
+@layer base {
+  *,
+  *::before,
+  *::after {
+    border-color: var(--c-line);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    /* Offset anchor targets so sticky nav never covers a heading. */
+    scroll-padding-top: calc(var(--header-h) + 1.5rem);
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--c-canvas);
+    color: var(--c-text);
+    font-family: var(--font-sans);
+    font-synthesis-weight: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-variant-ligatures: common-ligatures;
+    overflow-x: hidden;
+    /* Smooth the colour flip when toggling themes. */
+    transition: background-color var(--dur-base) var(--ease-out-quint),
+      color var(--dur-base) var(--ease-out-quint);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Numbers in stats/counters must not jitter while animating. */
+  [data-counter],
+  .tabular {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum' 1;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  ::selection {
+    background: var(--c-accent);
+    color: var(--c-accent-contrast);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--c-accent);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  /* Only show focus rings for keyboard users, never suppress them entirely. */
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  img,
+  video,
+  svg {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Prevent layout shift while lazy images decode. */
+  img {
+    /* A hairline outline stops light images bleeding into light backgrounds. */
+    box-shadow: inset 0 0 0 1px var(--c-line);
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px solid var(--c-line);
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--c-canvas);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--c-line-strong);
+    border-radius: 999px;
+    border: 2px solid var(--c-canvas);
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--c-text-subtle);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   4. Component primitives
+   -------------------------------------------------------------------------- */
+@layer components {
+  .shell {
+    width: 100%;
+    max-width: 78rem;
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+
+  .shell-wide {
+    width: 100%;
+    max-width: 90rem;
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+
+  .section {
+    padding-block: clamp(4rem, 3rem + 6vw, 8.5rem);
+  }
+
+  .section-tight {
+    padding-block: clamp(3rem, 2.4rem + 3vw, 5rem);
+  }
+
+  /* Eyebrow / kicker label */
+  .kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--c-text-subtle);
+  }
+
+  .kicker::before {
+    content: '';
+    inline-size: 1.75rem;
+    block-size: 1px;
+    background: linear-gradient(90deg, var(--c-accent), transparent);
+  }
+
+  /* Gradient headline treatment used sparingly on hero words. */
+  .text-gradient {
+    background: linear-gradient(
+      100deg,
+      var(--c-text) 0%,
+      var(--c-text) 30%,
+      var(--c-accent) 62%,
+      var(--c-second) 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .text-accent-serif {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 400;
+    color: var(--c-accent);
+    letter-spacing: -0.01em;
+  }
+
+  /* Frosted panel */
+  .glass {
+    background: var(--c-glass);
+    border: 1px solid var(--c-glass-line);
+    backdrop-filter: blur(16px) saturate(150%);
+    -webkit-backdrop-filter: blur(16px) saturate(150%);
+  }
+
+  .card {
+    position: relative;
+    border-radius: var(--radius-card);
+    border: 1px solid var(--c-line);
+    background: var(--c-surface);
+    /* Nested radius rule: inner radius = outer − padding, handled per-use. */
+    transition: border-color var(--dur-base) var(--ease-out-quint),
+      transform var(--dur-base) var(--ease-out-quint),
+      box-shadow var(--dur-base) var(--ease-out-quint);
+  }
+
+  .card-hover:hover {
+    transform: translateY(-3px);
+    border-color: var(--c-line-strong);
+    box-shadow: var(--shadow-lg);
+  }
+
+  /* Hairline top highlight — the detail that makes dark cards read as glass. */
+  .card-sheen::before {
+    content: '';
+    position: absolute;
+    inset-inline: 12%;
+    inset-block-start: 0;
+    block-size: 1px;
+    background: linear-gradient(90deg, transparent, var(--c-line-strong), transparent);
+    pointer-events: none;
+  }
+
+  .divider-x {
+    block-size: 1px;
+    background: linear-gradient(90deg, transparent, var(--c-line), transparent);
+  }
+
+  .prose-tag {
+    display: inline-flex;
+    align-items: center;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--c-line);
+    background: var(--c-overlay);
+    padding: 0.25rem 0.7rem;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.04em;
+    color: var(--c-text-muted);
+    white-space: nowrap;
+  }
+
+  /* Faint engineering grid — sets the "workshop" atmosphere. */
+  .bg-grid {
+    background-image: linear-gradient(var(--c-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--c-line) 1px, transparent 1px);
+    background-size: 64px 64px;
+    background-position: center;
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 20%, transparent 75%);
+    -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 20%, transparent 75%);
+  }
+
+  .bg-dots {
+    background-image: radial-gradient(var(--c-line-strong) 1px, transparent 1px);
+    background-size: 22px 22px;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   5. Utilities
+   -------------------------------------------------------------------------- */
+@layer utilities {
+  .stack > * + * {
+    margin-block-start: var(--stack-gap, 1rem);
+  }
+
+  .balance {
+    text-wrap: balance;
+  }
+
+  /* Fade the tail of an overflowing row (marquees, filter bars). */
+  .mask-edges {
+    mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  }
+
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   6. Motion — scroll reveal, counters, marquee
+   Elements opt in with data-reveal; IntersectionObserver adds .is-visible.
+   Everything degrades to "already visible" when JS is off (see <noscript>).
+   -------------------------------------------------------------------------- */
+[data-reveal] {
+  opacity: 0;
+  transform: translate3d(0, var(--reveal-y, 18px), 0) scale(var(--reveal-s, 1));
+  transition: opacity var(--dur-slow) var(--ease-out-quint),
+    transform var(--dur-slow) var(--ease-out-quint);
+  transition-delay: var(--reveal-delay, 0ms);
+  will-change: opacity, transform;
+}
+
+[data-reveal='left'] {
+  transform: translate3d(-24px, 0, 0);
+}
+[data-reveal='right'] {
+  transform: translate3d(24px, 0, 0);
+}
+[data-reveal='scale'] {
+  --reveal-s: 0.96;
+  --reveal-y: 8px;
+}
+
+[data-reveal].is-visible {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
+  will-change: auto;
+}
+
+@keyframes float-slow {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate3d(0, -18px, 0) rotate(3deg);
+  }
+}
+
+@keyframes drift {
+  0% {
+    transform: translate3d(-2%, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(3%, -4%, 0) scale(1.08);
+  }
+  100% {
+    transform: translate3d(-2%, 0, 0) scale(1);
+  }
+}
+
+@keyframes marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes pulse-ring {
+  0% {
+    box-shadow: 0 0 0 0 var(--c-accent-ring);
+  }
+  70% {
+    box-shadow: 0 0 0 12px transparent;
+  }
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+
+.animate-float {
+  animation: float-slow 9s var(--ease-out-quint) infinite;
+}
+
+.animate-marquee {
+  animation: marquee var(--marquee-dur, 42s) linear infinite;
+}
+
+.animate-pulse-ring {
+  animation: pulse-ring 2.6s ease-out infinite;
+}
+
+/* Ambient aurora blobs behind hero/CTA sections. */
+.aurora {
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(90px);
+  opacity: 0.5;
+  pointer-events: none;
+  animation: drift 22s ease-in-out infinite;
+}
+
+[data-theme='light'] .aurora {
+  opacity: 0.34;
+}
+
+/* Film grain overlay — kills banding in the large gradients and adds texture. */
+.grain::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.032;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* --------------------------------------------------------------------------
+   7. Accessibility — honour reduced-motion everywhere
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .aurora {
+    animation: none;
+  }
+}
+
+/* Skip link */
+.skip-link {
+  position: absolute;
+  inset-inline-start: 1rem;
+  inset-block-start: -100%;
+  z-index: 200;
+  border-radius: 0.6rem;
+  background: var(--c-accent);
+  color: var(--c-accent-contrast);
+  padding: 0.7rem 1.1rem;
+  font-weight: 600;
+  transition: inset-block-start var(--dur-fast) var(--ease-out-quint);
+}
+
+.skip-link:focus-visible {
+  inset-block-start: 1rem;
+}

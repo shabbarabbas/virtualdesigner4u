@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1100" width="900" height="1100" role="img" aria-label="SA">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FFB86B"/>
+      <stop offset="1" stop-color="#F07C3E"/>
+    </linearGradient>
+    <filter id="soft"><feGaussianBlur stdDeviation="28"/></filter>
+  </defs>
+  <rect width="900" height="1100" fill="url(#g)"/>
+  <g filter="url(#soft)"><circle cx="546" cy="423" r="405" fill="#fff" opacity="0.096"/><rect x="433" y="520" width="163.20000000000002" height="51" rx="25.5" fill="#fff" opacity="0.058"/><circle cx="273" cy="846" r="193" fill="#fff" opacity="0.123"/><rect x="753" y="1078" width="168" height="52.5" rx="26.25" fill="#fff" opacity="0.157"/><circle cx="474" cy="937" r="264" fill="#fff" opacity="0.148"/><rect x="892" y="433" width="488" height="152.5" rx="76.25" fill="#fff" opacity="0.158"/><circle cx="768" cy="84" r="189" fill="#fff" opacity="0.136"/></g>
+  <g><line x1="0" y1="0" x2="0" y2="1100" stroke="#1A0E02" stroke-width="1" opacity="0.08"/><line x1="64" y1="0" x2="64" y2="1100" stroke="#1A0E02" stroke-width="1" opacity="0.08"/><line x1="128" y1="0" x2="128" y2="1100" stroke="#1A0E02" stroke-width="1" opacity="0.08"/><line x1="192" y1="0" x2="192" y2="1100" stroke="#1A0E02" stroke-width="1" opacity="0.08"/><line x1="256" y1="0" x2="256" y2="1100" stroke="#1A0E02" stroke-width="1" opacity="0.08"/><line x1="320" y1="0" x2="320" y2="1100" stroke="#1A0E02" stroke-width="1" opacity="0.08"/><line x1="384" y1="0" x2="384" y2="1100" stroke="#1A0E02" stroke-width="1" opacity="0.08"/><line x1="448" y1="0" x2="448" y2="1100" stroke="#1A0E02" stroke-width="1" opacity="0.08"/><line x1="512" y1="0" x2="512" y2="1100" stroke="#1A0E02" stroke-width="1" opacity="0.08"/><line x1="576" y1="0" x2="576" y2="1100" stroke="#1A0E02" stroke-width="1" opacity="0.08"/><line x1="640" y1="0" x2="640" y2="1100" stroke="#1A0E02" stroke-width="1" opacity="0.08"/><line x1="704" y1="0" x2="704" y2="1100" stroke="#1A0E02" stroke-width="1" opacity="0.08"/><line x1="768" y1="0" x2="768" y2="1100" stroke="#1A0E02" stroke-width="1" opacity="0.08"/><line x1="832" y1="0" x2="832" y2="1100" stroke="#1A0E02" stroke-width="1" opacity="0.08"/><line x1="896" y1="0" x2="896" y2="1100" stroke="#1A0E02" stroke-width="1" opacity="0.08"/></g>
+  <text x="450" y="538" text-anchor="middle"
+        font-family="Bricolage Grotesque, Helvetica, Arial, sans-serif" font-size="122"
+        font-weight="700" fill="#1A0E02" opacity="0.82">SA</text>
+  <text x="450" y="650" text-anchor="middle"
+        font-family="ui-monospace, Menlo, monospace" font-size="46"
+        letter-spacing="3" fill="#1A0E02" opacity="0.55">PORTRAIT PLACEHOLDER</text>
+</svg>

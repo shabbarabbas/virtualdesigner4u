@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" role="img" aria-label="Shabbar Abbas">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FFB86B"/>
+      <stop offset="1" stop-color="#F07C3E"/>
+    </linearGradient>
+    <filter id="soft"><feGaussianBlur stdDeviation="28"/></filter>
+  </defs>
+  <rect width="1200" height="630" fill="url(#g)"/>
+  <g filter="url(#soft)"><circle cx="1009" cy="272" r="56" fill="#fff" opacity="0.067"/><rect x="283" y="477" width="81.60000000000001" height="25.5" rx="12.75" fill="#fff" opacity="0.088"/><circle cx="475" cy="82" r="90" fill="#fff" opacity="0.119"/><rect x="323" y="58" width="124.80000000000001" height="39" rx="19.5" fill="#fff" opacity="0.160"/><circle cx="1146" cy="234" r="199" fill="#fff" opacity="0.123"/><rect x="979" y="348" width="324.8" height="101.5" rx="50.75" fill="#fff" opacity="0.134"/><circle cx="1152" cy="218" r="181" fill="#fff" opacity="0.089"/></g>
+  <g><line x1="0" y1="0" x2="0" y2="630" stroke="#1A0E02" stroke-width="1" opacity="0.08"/><line x1="64" y1="0" x2="64" y2="630" stroke="#1A0E02" stroke-width="1" opacity="0.08"/><line x1="128" y1="0" x2="128" y2="630" stroke="#1A0E02" stroke-width="1" opacity="0.08"/><line x1="192" y1="0" x2="192" y2="630" stroke="#1A0E02" stroke-width="1" opacity="0.08"/><line x1="256" y1="0" x2="256" y2="630" stroke="#1A0E02" stroke-width="1" opacity="0.08"/><line x1="320" y1="0" x2="320" y2="630" stroke="#1A0E02" stroke-width="1" opacity="0.08"/><line x1="384" y1="0" x2="384" y2="630" stroke="#1A0E02" stroke-width="1" opacity="0.08"/><line x1="448" y1="0" x2="448" y2="630" stroke="#1A0E02" stroke-width="1" opacity="0.08"/><line x1="512" y1="0" x2="512" y2="630" stroke="#1A0E02" stroke-width="1" opacity="0.08"/><line x1="576" y1="0" x2="576" y2="630" stroke="#1A0E02" stroke-width="1" opacity="0.08"/><line x1="640" y1="0" x2="640" y2="630" stroke="#1A0E02" stroke-width="1" opacity="0.08"/><line x1="704" y1="0" x2="704" y2="630" stroke="#1A0E02" stroke-width="1" opacity="0.08"/><line x1="768" y1="0" x2="768" y2="630" stroke="#1A0E02" stroke-width="1" opacity="0.08"/><line x1="832" y1="0" x2="832" y2="630" stroke="#1A0E02" stroke-width="1" opacity="0.08"/><line x1="896" y1="0" x2="896" y2="630" stroke="#1A0E02" stroke-width="1" opacity="0.08"/><line x1="960" y1="0" x2="960" y2="630" stroke="#1A0E02" stroke-width="1" opacity="0.08"/><line x1="1024" y1="0" x2="1024" y2="630" stroke="#1A0E02" stroke-width="1" opacity="0.08"/><line x1="1088" y1="0" x2="1088" y2="630" stroke="#1A0E02" stroke-width="1" opacity="0.08"/><line x1="1152" y1="0" x2="1152" y2="630" stroke="#1A0E02" stroke-width="1" opacity="0.08"/></g>
+  <text x="600" y="303" text-anchor="middle"
+        font-family="Bricolage Grotesque, Helvetica, Arial, sans-serif" font-size="70"
+        font-weight="700" fill="#1A0E02" opacity="0.82">Shabbar Abbas</text>
+  <text x="600" y="372" text-anchor="middle"
+        font-family="ui-monospace, Menlo, monospace" font-size="26"
+        letter-spacing="3" fill="#1A0E02" opacity="0.55">WEB &amp; GAME DEVELOPER</text>
+</svg>

@@ -1,0 +1,266 @@
+---
+/**
+ * Project screenshot gallery with a lightbox.
+ *
+ * The lightbox uses a native <dialog>, which gives focus trapping, Escape to
+ * close and inertness of background content for free. Without JavaScript the
+ * thumbnails still render as a normal image grid.
+ */
+import Icon from '@/components/ui/Icon.astro';
+import { href } from '@/lib/utils';
+
+interface Props {
+  images: { src: string; alt: string; caption?: string }[];
+}
+
+const { images } = Astro.props;
+---
+
+{
+  images.length > 0 && (
+    <div class="gallery" data-gallery>
+      <ul class="grid gap-5 sm:grid-cols-2">
+        {images.map((image, i) => (
+          <li
+            class:list={[
+              'group relative overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface',
+              // Give the opening shot the full width — it sets the tone.
+              images.length > 2 && i === 0 && 'sm:col-span-2',
+            ]}
+            data-reveal
+            style={`--reveal-delay:${i * 70}ms`}
+          >
+            <button
+              type="button"
+              class="block w-full cursor-zoom-in text-left"
+              data-lightbox-open
+              data-index={i}
+              aria-label={`Enlarge screenshot: ${image.alt}`}
+            >
+              <img
+                src={href(image.src)}
+                alt={image.alt}
+                width={1400}
+                height={880}
+                loading="lazy"
+                decoding="async"
+                class="w-full object-cover transition-transform duration-700 ease-[var(--ease-quint)] group-hover:scale-[1.03]"
+              />
+
+              <span
+                class="pointer-events-none absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full bg-canvas/70 text-body opacity-0 backdrop-blur-sm transition-opacity duration-300 group-hover:opacity-100"
+                aria-hidden="true"
+              >
+                <Icon name="search" size={16} />
+              </span>
+            </button>
+
+            {image.caption && (
+              <p class="border-t border-line px-4 py-3 text-[0.82rem] text-subtle">
+                {image.caption}
+              </p>
+            )}
+          </li>
+        ))}
+      </ul>
+
+      <dialog class="lightbox" data-lightbox aria-label="Screenshot viewer">
+        <div class="lightbox-inner">
+          <img data-lightbox-img src="" alt="" />
+          <p class="lightbox-caption" data-lightbox-caption></p>
+        </div>
+
+        <button type="button" class="lightbox-btn lightbox-close" data-lightbox-close aria-label="Close viewer">
+          <Icon name="close" size={20} />
+        </button>
+
+        {images.length > 1 && (
+          <>
+            <button type="button" class="lightbox-btn lightbox-prev" data-lightbox-prev aria-label="Previous screenshot">
+              <Icon name="arrow-left" size={20} />
+            </button>
+            <button type="button" class="lightbox-btn lightbox-next" data-lightbox-next aria-label="Next screenshot">
+              <Icon name="arrow-right" size={20} />
+            </button>
+          </>
+        )}
+      </dialog>
+    </div>
+  )
+}
+
+<style>
+  .lightbox {
+    width: min(96vw, 1400px);
+    max-width: none;
+    max-height: 92vh;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: var(--c-text);
+    overflow: visible;
+  }
+
+  .lightbox::backdrop {
+    background: rgb(4 5 7 / 0.88);
+    backdrop-filter: blur(6px);
+  }
+
+  .lightbox[open] {
+    animation: lightbox-in 260ms var(--ease-out-quint);
+  }
+
+  @keyframes lightbox-in {
+    from {
+      opacity: 0;
+      transform: scale(0.97);
+    }
+  }
+
+  .lightbox-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+  }
+
+  .lightbox img {
+    width: 100%;
+    max-height: 78vh;
+    object-fit: contain;
+    border-radius: var(--radius-card);
+    border: 1px solid var(--c-line);
+    background: var(--c-surface);
+  }
+
+  .lightbox-caption {
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--c-text-muted);
+  }
+
+  .lightbox-caption:empty {
+    display: none;
+  }
+
+  .lightbox-btn {
+    position: absolute;
+    display: grid;
+    place-items: center;
+    height: 2.75rem;
+    width: 2.75rem;
+    border-radius: 999px;
+    border: 1px solid var(--c-glass-line);
+    background: var(--c-glass);
+    backdrop-filter: blur(10px);
+    color: var(--c-text);
+    cursor: pointer;
+    transition:
+      background-color var(--dur-fast) ease,
+      transform var(--dur-fast) ease;
+  }
+
+  .lightbox-btn:hover {
+    transform: scale(1.06);
+  }
+
+  .lightbox-close {
+    top: -1.25rem;
+    right: -0.5rem;
+  }
+
+  .lightbox-prev {
+    left: -0.5rem;
+    top: 50%;
+    translate: 0 -50%;
+  }
+
+  .lightbox-next {
+    right: -0.5rem;
+    top: 50%;
+    translate: 0 -50%;
+  }
+
+  @media (max-width: 640px) {
+    .lightbox-close {
+      top: -3rem;
+      right: 0;
+    }
+    .lightbox-prev {
+      left: 0.25rem;
+    }
+    .lightbox-next {
+      right: 0.25rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .lightbox[open] {
+      animation: none;
+    }
+    .lightbox-btn:hover {
+      transform: none;
+    }
+  }
+</style>
+
+<script>
+  function initGallery() {
+    const root = document.querySelector<HTMLElement>('[data-gallery]');
+    if (!root || root.dataset.bound === 'true') return;
+    root.dataset.bound = 'true';
+
+    const dialog = root.querySelector<HTMLDialogElement>('[data-lightbox]');
+    const img = root.querySelector<HTMLImageElement>('[data-lightbox-img]');
+    const caption = root.querySelector<HTMLElement>('[data-lightbox-caption]');
+    const triggers = [...root.querySelectorAll<HTMLButtonElement>('[data-lightbox-open]')];
+    if (!dialog || !img || !triggers.length) return;
+
+    // Read the source data straight off the thumbnails — no duplicated state.
+    const slides = triggers.map((trigger) => {
+      const thumb = trigger.querySelector('img')!;
+      return {
+        src: thumb.currentSrc || thumb.src,
+        alt: thumb.alt,
+        caption: trigger.closest('li')?.querySelector('p')?.textContent ?? '',
+      };
+    });
+
+    let index = 0;
+
+    function show(next: number) {
+      // Wrap around so the arrows never dead-end.
+      index = (next + slides.length) % slides.length;
+      const slide = slides[index]!;
+      img!.src = slide.src;
+      img!.alt = slide.alt;
+      if (caption) caption.textContent = slide.caption;
+    }
+
+    triggers.forEach((trigger, i) => {
+      trigger.addEventListener('click', () => {
+        show(i);
+        dialog.showModal();
+      });
+    });
+
+    root.querySelector('[data-lightbox-close]')?.addEventListener('click', () => dialog.close());
+    root.querySelector('[data-lightbox-prev]')?.addEventListener('click', () => show(index - 1));
+    root.querySelector('[data-lightbox-next]')?.addEventListener('click', () => show(index + 1));
+
+    // Clicking the backdrop (i.e. the dialog element itself) closes it.
+    dialog.addEventListener('click', (event) => {
+      if (event.target === dialog) dialog.close();
+    });
+
+    dialog.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowRight') show(index + 1);
+      if (event.key === 'ArrowLeft') show(index - 1);
+    });
+
+    // Restore focus to the thumbnail that opened the viewer.
+    dialog.addEventListener('close', () => triggers[index]?.focus());
+  }
+
+  initGallery();
+  document.addEventListener('astro:page-load', initGallery);
+</script>

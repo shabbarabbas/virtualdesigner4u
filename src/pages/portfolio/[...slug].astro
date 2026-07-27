@@ -1,0 +1,490 @@
+---
+import { render } from 'astro:content';
+import type { GetStaticPaths } from 'astro';
+
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import CTASection from '@/components/sections/CTASection.astro';
+import ProjectCard from '@/components/cards/ProjectCard.astro';
+import SectionHeading from '@/components/ui/SectionHeading.astro';
+import Button from '@/components/ui/Button.astro';
+import Icon from '@/components/ui/Icon.astro';
+import Tag from '@/components/ui/Tag.astro';
+import Prose from '@/components/ui/Prose.astro';
+import Gallery from '@/components/ui/Gallery.astro';
+
+import { getProjects, getProjectNeighbours, getRelatedProjects } from '@/lib/content';
+import { site } from '@/config/site';
+import { href } from '@/lib/utils';
+import { breadcrumbSchema, creativeWorkSchema } from '@/lib/schema';
+
+export const getStaticPaths = (async () => {
+  const projects = await getProjects();
+  return projects.map((project) => ({
+    params: { slug: project.id },
+    props: { project, projects },
+  }));
+}) satisfies GetStaticPaths;
+
+const { project, projects } = Astro.props;
+const { data } = project;
+const { Content } = await render(project);
+
+const origin = Astro.site?.origin ?? site.url;
+const { prev, next } = getProjectNeighbours(projects, project);
+const related = getRelatedProjects(projects, project, 3);
+
+const facts = [
+  data.client && { label: 'Client', value: data.client },
+  data.industry && { label: 'Industry', value: data.industry },
+  data.role && { label: 'My role', value: data.role },
+  data.duration && { label: 'Duration', value: data.duration },
+  { label: 'Year', value: String(data.year) },
+].filter(Boolean) as { label: string; value: string }[];
+---
+
+<BaseLayout
+  title={data.title}
+  description={data.seoDescription ?? data.summary}
+  image={data.cover}
+  schema={[
+    creativeWorkSchema(origin, {
+      title: data.title,
+      description: data.summary,
+      path: `/portfolio/${project.id}`,
+      image: data.cover,
+      year: data.year,
+      tech: data.tech,
+      client: data.client,
+    }),
+    breadcrumbSchema(origin, [
+      { name: 'Portfolio', path: '/portfolio' },
+      { name: data.title, path: `/portfolio/${project.id}` },
+    ]),
+  ]}
+  noindex={data.noindex}
+>
+  <!-- ── Hero ─────────────────────────────────────────────────────── -->
+  <article>
+    <header
+      class="relative overflow-hidden border-b border-line pb-14 pt-[calc(var(--header-h)+3rem)] sm:pb-20 sm:pt-[calc(var(--header-h)+4.5rem)]"
+      style={data.accent ? `--c-accent-local:${data.accent}` : undefined}
+    >
+      <div class="bg-grid absolute inset-0 opacity-60" aria-hidden="true"></div>
+      <div
+        class="aurora -top-28 left-[8%] h-72 w-[36rem]"
+        style={`background:radial-gradient(circle,${data.accent ?? 'var(--c-accent)'},transparent 65%)`}
+        aria-hidden="true"
+      >
+      </div>
+
+      <div class="shell relative">
+        <nav aria-label="Breadcrumb" class="mb-7">
+          <ol class="flex flex-wrap items-center gap-1.5 font-mono text-[0.72rem] text-subtle">
+            <li><a href={href('/')} class="transition-colors hover:text-accent">Home</a></li>
+            <li class="flex items-center gap-1.5">
+              <Icon name="chevron-down" size={12} class="-rotate-90 opacity-50" />
+              <a href={href('/portfolio')} class="transition-colors hover:text-accent">Portfolio</a>
+            </li>
+            <li class="flex items-center gap-1.5">
+              <Icon name="chevron-down" size={12} class="-rotate-90 opacity-50" />
+              <span class="text-muted" aria-current="page">{data.title}</span>
+            </li>
+          </ol>
+        </nav>
+
+        <div class="grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-end lg:gap-14">
+          <div class="flex flex-col gap-5">
+            <div class="flex flex-wrap items-center gap-2">
+              <Tag variant="solid">{data.category}</Tag>
+              {data.tags.slice(0, 3).map((tag) => <Tag>{tag}</Tag>)}
+            </div>
+
+            <h1 class="text-h1 font-display text-body">{data.title}</h1>
+            <p class="text-lead max-w-2xl text-muted">{data.summary}</p>
+
+            <div class="flex flex-wrap gap-3 pt-2">
+              {
+                data.links.live && (
+                  <Button href={data.links.live} icon="external">
+                    Visit live site
+                  </Button>
+                )
+              }
+              {
+                data.links.repo && (
+                  <Button href={data.links.repo} variant="outline" icon="github">
+                    Source code
+                  </Button>
+                )
+              }
+            </div>
+          </div>
+
+          <!-- Project facts -->
+          <dl class="card grid grid-cols-2 gap-px overflow-hidden bg-line sm:grid-cols-3 lg:grid-cols-2">
+            {
+              facts.map((fact) => (
+                <div class="flex flex-col gap-1 bg-surface px-5 py-4">
+                  <dt class="font-mono text-[0.66rem] uppercase tracking-[0.14em] text-subtle">
+                    {fact.label}
+                  </dt>
+                  <dd class="text-[0.9rem] font-medium text-body">{fact.value}</dd>
+                </div>
+              ))
+            }
+          </dl>
+        </div>
+      </div>
+    </header>
+
+    <!-- ── Cover ──────────────────────────────────────────────────── -->
+    <div class="shell -mt-px">
+      <figure class="section-tight">
+        <img
+          src={href(data.cover)}
+          alt={data.coverAlt}
+          width={1600}
+          height={900}
+          loading="eager"
+          fetchpriority="high"
+          decoding="async"
+          class="w-full rounded-[var(--radius-card)] border border-line"
+        />
+      </figure>
+    </div>
+
+    <!-- ── Overview ───────────────────────────────────────────────── -->
+    <section class="section-tight" aria-labelledby="overview-heading">
+      <div class="shell">
+        <div class="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
+          <div class="lg:sticky lg:top-[calc(var(--header-h)+2.5rem)] lg:self-start">
+            <h2 id="overview-heading" class="text-h2 font-display text-body" data-reveal>
+              Overview
+            </h2>
+
+            <div class="mt-6 flex flex-col gap-5" data-reveal style="--reveal-delay:80ms">
+              <div class="flex flex-col gap-2.5">
+                <h3 class="font-mono text-[0.7rem] uppercase tracking-[0.16em] text-second">
+                  Tech stack
+                </h3>
+                <ul class="flex flex-wrap gap-2">
+                  {data.tech.map((tech) => <Tag variant="accent">{tech}</Tag>)}
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-10">
+            <div data-reveal>
+              <p class="text-[1.05rem] leading-relaxed text-body">{data.description}</p>
+            </div>
+
+            <!-- Problem / solution -->
+            <div class="grid gap-5 sm:grid-cols-2">
+              <div class="card flex flex-col gap-3 p-6" data-reveal>
+                <span class="grid h-10 w-10 place-items-center rounded-xl border border-danger/25 bg-overlay text-danger">
+                  <Icon name="bug" size={18} />
+                </span>
+                <h3 class="font-display text-[1.05rem] font-semibold text-body">The problem</h3>
+                <p class="text-[0.9rem] leading-relaxed text-muted">{data.problem}</p>
+              </div>
+
+              <div class="card flex flex-col gap-3 p-6" data-reveal style="--reveal-delay:80ms">
+                <span class="grid h-10 w-10 place-items-center rounded-xl border border-second/25 bg-second-soft text-second">
+                  <Icon name="target" size={18} />
+                </span>
+                <h3 class="font-display text-[1.05rem] font-semibold text-body">The approach</h3>
+                <p class="text-[0.9rem] leading-relaxed text-muted">{data.solution}</p>
+              </div>
+            </div>
+
+            <!-- Long-form body from the Markdown entry -->
+            <Prose class="max-w-none" size="lg">
+              <Content />
+            </Prose>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Features ───────────────────────────────────────────────── -->
+    {
+      data.features.length > 0 && (
+        <section class="section border-y border-line bg-canvas-alt" aria-labelledby="features-heading">
+          <div class="shell">
+            <SectionHeading
+              id="features-heading"
+              kicker="What was built"
+              title="Key *features*"
+              size="md"
+            />
+
+            <ul class="mt-10 grid gap-x-8 gap-y-5 sm:grid-cols-2 lg:grid-cols-3">
+              {data.features.map((feature, i) => (
+                <li
+                  class="flex items-start gap-3 text-[0.92rem] leading-relaxed text-muted"
+                  data-reveal
+                  style={`--reveal-delay:${i * 50}ms`}
+                >
+                  <Icon name="check" size={16} class="mt-0.5 shrink-0 text-accent" />
+                  <span>{feature}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      )
+    }
+
+    <!-- ── Challenges ─────────────────────────────────────────────── -->
+    {
+      data.challenges.length > 0 && (
+        <section class="section" aria-labelledby="challenges-heading">
+          <div class="shell">
+            <SectionHeading
+              id="challenges-heading"
+              kicker="The hard parts"
+              title="Challenges and how I *solved* them"
+              lead="Every project has a moment where the obvious approach stops working. These were the ones worth writing down."
+            />
+
+            <div class="mt-12 flex flex-col gap-5">
+              {data.challenges.map((challenge, i) => (
+                <article
+                  class="card flex gap-5 p-6 sm:p-7"
+                  data-reveal
+                  style={`--reveal-delay:${i * 70}ms`}
+                >
+                  <span class="font-display text-[1.6rem] font-bold leading-none text-accent opacity-30">
+                    {String(i + 1).padStart(2, '0')}
+                  </span>
+
+                  <div class="flex flex-col gap-2">
+                    <h3 class="font-display text-[1.05rem] font-semibold text-body">
+                      {challenge.title}
+                    </h3>
+                    <p class="text-[0.92rem] leading-relaxed text-muted">{challenge.detail}</p>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+      )
+    }
+
+    <!-- ── Results ────────────────────────────────────────────────── -->
+    {
+      data.results.length > 0 && (
+        <section
+          class="section border-y border-line bg-canvas-alt"
+          aria-labelledby="results-heading"
+        >
+          <div class="shell">
+            <SectionHeading
+              id="results-heading"
+              kicker="Outcome"
+              title="The *numbers* afterwards"
+              lead="Measured against the same tooling and conditions as the original baseline."
+              align="center"
+            />
+
+            <dl class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+              {data.results.map((result, i) => (
+                <div
+                  class="card flex flex-col gap-2 p-6 text-center"
+                  data-reveal
+                  style={`--reveal-delay:${i * 80}ms`}
+                >
+                  <dd class="text-gradient font-display text-[clamp(1.8rem,1.4rem+1.4vw,2.4rem)] font-bold leading-none">
+                    {result.metric}
+                  </dd>
+                  <dt class="text-[0.88rem] font-medium text-body">{result.label}</dt>
+                  {result.detail && (
+                    <p class="text-[0.8rem] leading-relaxed text-subtle">{result.detail}</p>
+                  )}
+                </div>
+              ))}
+            </dl>
+          </div>
+        </section>
+      )
+    }
+
+    <!-- ── Gallery ────────────────────────────────────────────────── -->
+    {
+      data.gallery.length > 0 && (
+        <section class="section" aria-labelledby="gallery-heading">
+          <div class="shell">
+            <SectionHeading
+              id="gallery-heading"
+              kicker="Screenshots"
+              title="A closer *look*"
+              size="md"
+            />
+            <div class="mt-10">
+              <Gallery images={data.gallery} />
+            </div>
+          </div>
+        </section>
+      )
+    }
+
+    <!-- ── Client quote ───────────────────────────────────────────── -->
+    {
+      data.testimonial && (
+        <section class="section border-y border-line bg-canvas-alt">
+          <div class="shell max-w-3xl">
+            <figure class="flex flex-col items-center gap-6 text-center" data-reveal="scale">
+              <Icon name="quote" size={36} class="text-accent opacity-30" />
+
+              <blockquote class="font-serif text-[clamp(1.25rem,1rem+1vw,1.6rem)] leading-snug text-body">
+                “{data.testimonial.quote}”
+              </blockquote>
+
+              <figcaption class="flex flex-col gap-0.5">
+                <span class="font-semibold text-body">{data.testimonial.author}</span>
+                {data.testimonial.role && (
+                  <span class="text-[0.85rem] text-subtle">{data.testimonial.role}</span>
+                )}
+              </figcaption>
+            </figure>
+          </div>
+        </section>
+      )
+    }
+
+    <!-- ── Lessons ────────────────────────────────────────────────── -->
+    {
+      data.lessons.length > 0 && (
+        <section class="section" aria-labelledby="lessons-heading">
+          <div class="shell max-w-3xl">
+            <SectionHeading
+              id="lessons-heading"
+              kicker="Retrospective"
+              title="What I *took* from this one"
+              size="md"
+            />
+
+            <ul class="mt-10 flex flex-col gap-4">
+              {data.lessons.map((lesson, i) => (
+                <li
+                  class="flex items-start gap-3.5 text-[0.95rem] leading-relaxed text-muted"
+                  data-reveal
+                  style={`--reveal-delay:${i * 60}ms`}
+                >
+                  <Icon name="sparkles" size={16} class="mt-1 shrink-0 text-second" />
+                  <span>{lesson}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      )
+    }
+
+    <!-- ── Prev / next ────────────────────────────────────────────── -->
+    <nav class="border-t border-line" aria-label="Project navigation">
+      <div class="shell grid gap-px sm:grid-cols-2">
+        {
+          prev ? (
+            <a href={href(`/portfolio/${prev.id}`)} class="adjacent group">
+              <span class="adjacent-label">
+                <Icon name="arrow-left" size={14} />
+                Previous project
+              </span>
+              <span class="adjacent-title">{prev.data.title}</span>
+            </a>
+          ) : (
+            <span />
+          )
+        }
+
+        {
+          next && (
+            <a href={href(`/portfolio/${next.id}`)} class="adjacent adjacent-end group">
+              <span class="adjacent-label">
+                Next project
+                <Icon name="arrow-right" size={14} />
+              </span>
+              <span class="adjacent-title">{next.data.title}</span>
+            </a>
+          )
+        }
+      </div>
+    </nav>
+  </article>
+
+  <!-- ── Related ────────────────────────────────────────────────────  -->
+  {
+    related.length > 0 && (
+      <section class="section border-t border-line" aria-labelledby="related-heading">
+        <div class="shell">
+          <SectionHeading
+            id="related-heading"
+            kicker="Keep exploring"
+            title="Related *work*"
+            size="md"
+          >
+            <Button slot="action" href="/portfolio" variant="ghost" icon="arrow-right">
+              All projects
+            </Button>
+          </SectionHeading>
+
+          <div class="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {related.map((item, i) => (
+              <ProjectCard project={item} delay={i * 80} />
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <CTASection />
+</BaseLayout>
+
+<style>
+  .adjacent {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 2rem 0;
+    transition: background-color var(--dur-fast) ease;
+  }
+
+  /* On two-up layouts the "next" link aligns right for a natural read. */
+  .adjacent-end {
+    align-items: flex-end;
+    text-align: right;
+  }
+
+  .adjacent-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--c-text-subtle);
+  }
+
+  .adjacent-title {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--c-text);
+    transition: color var(--dur-fast) ease;
+  }
+
+  .adjacent:hover .adjacent-title {
+    color: var(--c-accent);
+  }
+
+  @media (min-width: 640px) {
+    .adjacent {
+      padding-inline: 1.5rem;
+    }
+  }
+</style>

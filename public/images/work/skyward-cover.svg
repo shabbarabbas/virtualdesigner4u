@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900" role="img" aria-label="Skyward Runner">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FFB86B"/>
+      <stop offset="1" stop-color="#F07C3E"/>
+    </linearGradient>
+    <filter id="soft"><feGaussianBlur stdDeviation="28"/></filter>
+  </defs>
+  <rect width="1600" height="900" fill="url(#g)"/>
+  <g filter="url(#soft)"><circle cx="509" cy="653" r="128" fill="#fff" opacity="0.113"/><rect x="1415" y="739" width="96" height="30" rx="15" fill="#fff" opacity="0.120"/><circle cx="913" cy="363" r="339" fill="#fff" opacity="0.125"/><rect x="329" y="690" width="371.20000000000005" height="116" rx="58" fill="#fff" opacity="0.150"/><circle cx="153" cy="759" r="182" fill="#fff" opacity="0.057"/><rect x="1132" y="895" width="100.80000000000001" height="31.5" rx="15.75" fill="#fff" opacity="0.152"/><circle cx="1424" cy="420" r="63" fill="#fff" opacity="0.128"/></g>
+  <g><line x1="0" y1="0" x2="0" y2="900" stroke="#1A0E02" stroke-width="1" opacity="0.08"/><line x1="64" y1="0" x2="64" y2="900" stroke="#1A0E02" stroke-width="1" opacity="0.08"/><line x1="128" y1="0" x2="128" y2="900" stroke="#1A0E02" stroke-width="1" opacity="0.08"/><line x1="192" y1="0" x2="192" y2="900" stroke="#1A0E02" stroke-width="1" opacity="0.08"/><line x1="256" y1="0" x2="256" y2="900" stroke="#1A0E02" stroke-width="1" opacity="0.08"/><line x1="320" y1="0" x2="320" y2="900" stroke="#1A0E02" stroke-width="1" opacity="0.08"/><line x1="384" y1="0" x2="384" y2="900" stroke="#1A0E02" stroke-width="1" opacity="0.08"/><line x1="448" y1="0" x2="448" y2="900" stroke="#1A0E02" stroke-width="1" opacity="0.08"/><line x1="512" y1="0" x2="512" y2="900" stroke="#1A0E02" stroke-width="1" opacity="0.08"/><line x1="576" y1="0" x2="576" y2="900" stroke="#1A0E02" stroke-width="1" opacity="0.08"/><line x1="640" y1="0" x2="640" y2="900" stroke="#1A0E02" stroke-width="1" opacity="0.08"/><line x1="704" y1="0" x2="704" y2="900" stroke="#1A0E02" stroke-width="1" opacity="0.08"/><line x1="768" y1="0" x2="768" y2="900" stroke="#1A0E02" stroke-width="1" opacity="0.08"/><line x1="832" y1="0" x2="832" y2="900" stroke="#1A0E02" stroke-width="1" opacity="0.08"/><line x1="896" y1="0" x2="896" y2="900" stroke="#1A0E02" stroke-width="1" opacity="0.08"/><line x1="960" y1="0" x2="960" y2="900" stroke="#1A0E02" stroke-width="1" opacity="0.08"/><line x1="1024" y1="0" x2="1024" y2="900" stroke="#1A0E02" stroke-width="1" opacity="0.08"/><line x1="1088" y1="0" x2="1088" y2="900" stroke="#1A0E02" stroke-width="1" opacity="0.08"/><line x1="1152" y1="0" x2="1152" y2="900" stroke="#1A0E02" stroke-width="1" opacity="0.08"/><line x1="1216" y1="0" x2="1216" y2="900" stroke="#1A0E02" stroke-width="1" opacity="0.08"/><line x1="1280" y1="0" x2="1280" y2="900" stroke="#1A0E02" stroke-width="1" opacity="0.08"/><line x1="1344" y1="0" x2="1344" y2="900" stroke="#1A0E02" stroke-width="1" opacity="0.08"/><line x1="1408" y1="0" x2="1408" y2="900" stroke="#1A0E02" stroke-width="1" opacity="0.08"/><line x1="1472" y1="0" x2="1472" y2="900" stroke="#1A0E02" stroke-width="1" opacity="0.08"/><line x1="1536" y1="0" x2="1536" y2="900" stroke="#1A0E02" stroke-width="1" opacity="0.08"/></g>
+  <text x="800" y="438" text-anchor="middle"
+        font-family="Bricolage Grotesque, Helvetica, Arial, sans-serif" font-size="100"
+        font-weight="700" fill="#1A0E02" opacity="0.82">Skyward Runner</text>
+  <text x="800" y="532" text-anchor="middle"
+        font-family="ui-monospace, Menlo, monospace" font-size="38"
+        letter-spacing="3" fill="#1A0E02" opacity="0.55">ARCADE GAME</text>
+</svg>

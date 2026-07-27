@@ -1,0 +1,241 @@
+---
+import { render } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/sections/PageHeader.astro';
+import CTASection from '@/components/sections/CTASection.astro';
+import Accordion from '@/components/sections/Accordion.astro';
+import SectionHeading from '@/components/ui/SectionHeading.astro';
+import Button from '@/components/ui/Button.astro';
+import Icon from '@/components/ui/Icon.astro';
+import Tag from '@/components/ui/Tag.astro';
+import Prose from '@/components/ui/Prose.astro';
+
+import { getServices, getFaqs } from '@/lib/content';
+import { process } from '@/config/personal';
+import { site } from '@/config/site';
+import { breadcrumbSchema, professionalServiceSchema } from '@/lib/schema';
+import type { IconName } from '@/types';
+
+const origin = Astro.site?.origin ?? site.url;
+const services = await getServices();
+const faqs = (await getFaqs()).filter((faq) => faq.data.category === 'Pricing').slice(0, 4);
+
+// Render each service body once, up front, so the template stays declarative.
+const rendered = await Promise.all(
+  services.map(async (service) => ({ service, Content: (await render(service)).Content })),
+);
+
+// Group order mirrors how a client's needs typically escalate.
+const groups = ['Design', 'Development', 'Games', 'Care'] as const;
+---
+
+<BaseLayout
+  title="Services"
+  description="Web design, web development, WordPress, landing pages, HTML5 game development, performance optimisation and ongoing maintenance — delivered by one senior developer."
+  schema={[
+    professionalServiceSchema(origin),
+    breadcrumbSchema(origin, [{ name: 'Services', path: '/services' }]),
+  ]}
+>
+  <PageHeader
+    kicker="Services"
+    title="Everything needed to launch — and keep — a site that *performs*"
+    lead="Thirteen focused services across four areas. Take one, or take the whole path from first sketch to ongoing care."
+    breadcrumbs={[{ label: 'Services' }]}
+  >
+    <div class="mt-4 flex flex-wrap gap-2">
+      {
+        groups.map((group) => (
+          <a href={`#group-${group.toLowerCase()}`} class="chip-link">
+            {group}
+          </a>
+        ))
+      }
+    </div>
+  </PageHeader>
+
+  <!-- ── Service groups ───────────────────────────────────────────── -->
+  {
+    groups.map((group, groupIndex) => {
+      const items = rendered.filter(({ service }) => service.data.group === group);
+      if (items.length === 0) return null;
+
+      return (
+        <section
+          id={`group-${group.toLowerCase()}`}
+          class:list={[
+            'section scroll-mt-24',
+            groupIndex % 2 === 1 && 'border-y border-line bg-canvas-alt',
+          ]}
+          aria-labelledby={`group-${group.toLowerCase()}-heading`}
+        >
+          <div class="shell">
+            <SectionHeading
+              id={`group-${group.toLowerCase()}-heading`}
+              kicker={`0${groupIndex + 1} — ${group}`}
+              title={
+                {
+                  Design: 'Design that earns *attention*',
+                  Development: 'Development that holds up under *load*',
+                  Games: 'Browser games that keep people *playing*',
+                  Care: 'Care that keeps things *fast*',
+                }[group]
+              }
+              lead={
+                {
+                  Design: 'Interfaces built around your visitors and your goals — not a template someone else already bought.',
+                  Development: 'Hand-written, standards-based code with accessibility and performance verified as part of the build.',
+                  Games: 'HTML5 and Phaser 3 games for education, marketing and pure entertainment, running smoothly on the devices your audience actually owns.',
+                  Care: 'Rescue work and ongoing support for sites that already exist — including the ones I did not build.',
+                }[group]
+              }
+            />
+
+            <div class="mt-12 flex flex-col gap-6">
+              {items.map(({ service, Content }, i) => (
+                <article
+                  id={service.id}
+                  class="card card-sheen scroll-mt-28 grid gap-8 p-7 sm:p-9 lg:grid-cols-[1fr_0.75fr]"
+                  data-reveal
+                  style={`--reveal-delay:${i * 80}ms`}
+                >
+                  <div class="flex flex-col gap-5">
+                    <div class="flex items-start gap-4">
+                      <span class="grid h-12 w-12 shrink-0 place-items-center rounded-2xl border border-accent/20 bg-accent-soft text-accent">
+                        <Icon name={service.data.icon as IconName} size={22} />
+                      </span>
+
+                      <div class="flex flex-col gap-1.5">
+                        <h3 class="text-h3 font-display text-body">{service.data.title}</h3>
+                        <p class="text-[0.92rem] text-muted">{service.data.summary}</p>
+                      </div>
+                    </div>
+
+                    <Prose class="max-w-none">
+                      <Content />
+                    </Prose>
+
+                    <div class="flex flex-wrap gap-2 pt-1">
+                      {service.data.technologies.map((tech) => (
+                        <Tag>{tech}</Tag>
+                      ))}
+                    </div>
+                  </div>
+
+                  <!-- Deliverables panel -->
+                  <div class="flex flex-col gap-6 rounded-[var(--radius-card)] border border-line bg-canvas-alt p-6">
+                    <div class="flex flex-col gap-3">
+                      <h4 class="font-mono text-[0.7rem] uppercase tracking-[0.16em] text-second">
+                        What you get
+                      </h4>
+                      <ul class="flex flex-col gap-2.5">
+                        {service.data.deliverables.map((item) => (
+                          <li class="flex items-start gap-2.5 text-[0.86rem] leading-relaxed text-muted">
+                            <Icon name="check" size={15} class="mt-0.5 shrink-0 text-second" />
+                            <span>{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    {(service.data.startingAt || service.data.timeline) && (
+                      <dl class="flex flex-col gap-3 border-t border-line pt-5 text-[0.84rem]">
+                        {service.data.startingAt && (
+                          <div class="flex items-center justify-between gap-3">
+                            <dt class="text-subtle">Starting at</dt>
+                            <dd class="font-medium text-body">{service.data.startingAt}</dd>
+                          </div>
+                        )}
+                        {service.data.timeline && (
+                          <div class="flex items-center justify-between gap-3">
+                            <dt class="text-subtle">Typical timeline</dt>
+                            <dd class="font-medium text-body">{service.data.timeline}</dd>
+                          </div>
+                        )}
+                      </dl>
+                    )}
+
+                    <Button href={`/contact?service=${encodeURIComponent(service.data.title)}`} full icon="arrow-right">
+                      Enquire
+                    </Button>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+      );
+    })
+  }
+
+  <!-- ── Process ──────────────────────────────────────────────────── -->
+  <section class="section border-t border-line" aria-labelledby="process-heading">
+    <div class="shell">
+      <SectionHeading
+        id="process-heading"
+        kicker="Engagement"
+        title="How a project actually *runs*"
+        lead="The same six stages apply whether you are booking a single landing page or a full platform rebuild."
+      />
+
+      <ol class="mt-12 grid gap-x-6 gap-y-9 sm:grid-cols-2 lg:grid-cols-3">
+        {
+          process.map((step, i) => (
+            <li class="flex gap-4" data-reveal style={`--reveal-delay:${i * 70}ms`}>
+              <span class="font-mono text-[0.8rem] font-semibold text-accent">{step.step}</span>
+              <div class="flex flex-col gap-2">
+                <h3 class="font-display text-[1.02rem] font-semibold text-body">{step.title}</h3>
+                <p class="text-[0.88rem] leading-relaxed text-muted">{step.description}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- ── Pricing FAQs ─────────────────────────────────────────────── -->
+  <section class="section border-t border-line bg-canvas-alt" aria-labelledby="pricing-heading">
+    <div class="shell max-w-3xl">
+      <SectionHeading
+        id="pricing-heading"
+        kicker="Money questions"
+        title="Straight answers about *cost*"
+        lead="No discovery call required to find out roughly what things cost."
+        align="center"
+      />
+
+      <div class="mt-10">
+        <Accordion items={faqs} exclusive groupName="pricing-faq" />
+      </div>
+
+      <div class="mt-8 flex justify-center">
+        <Button href="/faq" variant="outline" icon="arrow-right">All frequently asked questions</Button>
+      </div>
+    </div>
+  </section>
+
+  <CTASection
+    title="Not sure which service you *need*?"
+    lead="Describe the problem in plain language. I will tell you what it would take to fix, what it would cost, and whether it is worth doing at all."
+  />
+</BaseLayout>
+
+<style>
+  .chip-link {
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--c-line);
+    background: var(--c-surface);
+    padding: 0.4rem 1rem;
+    font-size: 0.82rem;
+    color: var(--c-text-muted);
+    transition:
+      color var(--dur-fast) ease,
+      border-color var(--dur-fast) ease;
+  }
+
+  .chip-link:hover {
+    color: var(--c-accent);
+    border-color: var(--c-accent-ring);
+  }
+</style>

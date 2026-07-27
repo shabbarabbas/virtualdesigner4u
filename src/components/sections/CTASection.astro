@@ -1,0 +1,76 @@
+---
+/** Closing call-to-action band, reused at the foot of most pages. */
+import Button from '@/components/ui/Button.astro';
+import Icon from '@/components/ui/Icon.astro';
+import { personal } from '@/config/personal';
+
+interface Props {
+  kicker?: string;
+  title?: string;
+  lead?: string;
+  primaryLabel?: string;
+  primaryHref?: string;
+}
+
+const {
+  kicker = 'Next step',
+  title = 'Let’s build something worth *keeping*',
+  lead = 'Tell me what you are working on and what success looks like. You will get an honest assessment of scope, timeline and cost — no sales script.',
+  primaryLabel = 'Start a project',
+  primaryHref = '/contact',
+} = Astro.props;
+
+const parts = title.split(/(\*[^*]+\*)/g).filter(Boolean);
+---
+
+<section class="section relative overflow-hidden">
+  <div
+    class="aurora bottom-0 left-1/2 h-72 w-[42rem] -translate-x-1/2"
+    style="background:radial-gradient(circle,var(--c-accent),transparent 65%)"
+    aria-hidden="true"
+  >
+  </div>
+
+  <div class="shell relative">
+    <div
+      class="card card-sheen relative flex flex-col items-center gap-8 overflow-hidden px-6 py-14 text-center sm:px-12 sm:py-20"
+      data-reveal="scale"
+    >
+      <div class="bg-dots absolute inset-0 opacity-[0.35]" aria-hidden="true"></div>
+
+      <div class="relative flex max-w-2xl flex-col items-center gap-5">
+        <span class="kicker">{kicker}</span>
+
+        <h2 class="text-h1 font-display text-body">
+          {
+            parts.map((part) =>
+              part.startsWith('*') && part.endsWith('*') ? (
+                <span class="text-accent-serif">{part.slice(1, -1)}</span>
+              ) : (
+                <Fragment>{part}</Fragment>
+              ),
+            )
+          }
+        </h2>
+
+        <p class="text-lead text-muted">{lead}</p>
+      </div>
+
+      <div class="relative flex flex-wrap items-center justify-center gap-3">
+        <Button href={primaryHref} size="lg" icon="arrow-right">{primaryLabel}</Button>
+        <Button href="/portfolio" size="lg" variant="outline">See the work</Button>
+      </div>
+
+      <p class="relative inline-flex flex-wrap items-center justify-center gap-x-5 gap-y-2 font-mono text-[0.75rem] text-subtle">
+        <span class="inline-flex items-center gap-1.5">
+          <Icon name="clock" size={13} />
+          {personal.responseTime}
+        </span>
+        <span class="inline-flex items-center gap-1.5">
+          <Icon name="map-pin" size={13} />
+          {personal.location} · {personal.timezone}
+        </span>
+      </p>
+    </div>
+  </div>
+</section>

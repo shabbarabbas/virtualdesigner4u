@@ -1,0 +1,88 @@
+---
+/**
+ * Theme toggle.
+ *
+ * The initial theme is applied by the blocking script in BaseHead, so this
+ * button only handles switching and persistence. Both icons are rendered and
+ * cross-faded with CSS — no layout shift, no JS-driven icon swap.
+ */
+---
+
+<button
+  type="button"
+  id="theme-toggle"
+  class="group relative grid h-10 w-10 place-items-center rounded-full border border-line text-muted transition-colors duration-200 hover:border-line-strong hover:text-body"
+  aria-label="Switch between dark and light theme"
+  title="Toggle theme"
+>
+  <span class="sr-only">Toggle colour theme</span>
+
+  <svg class="icon-sun absolute h-[18px] w-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
+    <circle cx="12" cy="12" r="4"></circle>
+    <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path>
+  </svg>
+
+  <svg class="icon-moon absolute h-[18px] w-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"></path>
+  </svg>
+</button>
+
+<style>
+  .icon-sun,
+  .icon-moon {
+    transition:
+      opacity 240ms var(--ease-out-quint),
+      transform 320ms var(--ease-spring);
+  }
+
+  /* Dark theme active → offer the sun (switch to light). */
+  [data-theme='dark'] .icon-sun {
+    opacity: 1;
+    transform: rotate(0) scale(1);
+  }
+  [data-theme='dark'] .icon-moon {
+    opacity: 0;
+    transform: rotate(-70deg) scale(0.5);
+  }
+
+  [data-theme='light'] .icon-sun {
+    opacity: 0;
+    transform: rotate(70deg) scale(0.5);
+  }
+  [data-theme='light'] .icon-moon {
+    opacity: 1;
+    transform: rotate(0) scale(1);
+  }
+</style>
+
+<script>
+  /**
+   * Bound with a delegated listener so it survives Astro view transitions
+   * without needing to re-attach on every navigation.
+   */
+  const THEME_KEY = 'theme';
+
+  function applyTheme(theme: 'dark' | 'light') {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem(THEME_KEY, theme);
+
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.setAttribute('content', theme === 'light' ? '#fbf9f6' : '#08090c');
+  }
+
+  document.addEventListener('click', (event) => {
+    const target = event.target as HTMLElement | null;
+    if (!target?.closest('#theme-toggle')) return;
+
+    const current = document.documentElement.getAttribute('data-theme');
+    applyTheme(current === 'light' ? 'dark' : 'light');
+  });
+
+  // Follow the OS only while the visitor has not made an explicit choice.
+  window
+    .matchMedia('(prefers-color-scheme: light)')
+    .addEventListener('change', (event) => {
+      if (localStorage.getItem(THEME_KEY)) return;
+      document.documentElement.setAttribute('data-theme', event.matches ? 'light' : 'dark');
+    });
+</script>

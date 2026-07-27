@@ -1,0 +1,152 @@
+---
+/**
+ * FAQ accordion.
+ *
+ * Built on native <details>/<summary>, so keyboard support, screen reader
+ * semantics and no-JS behaviour all work without any custom ARIA. The open
+ * animation uses a grid-rows transition, which animates smoothly to `auto`.
+ */
+import Icon from '@/components/ui/Icon.astro';
+import { render } from 'astro:content';
+import type { Faq } from '@/lib/content';
+
+interface Props {
+  items: Faq[];
+  /** `name` makes the group exclusive — opening one closes the others. */
+  exclusive?: boolean;
+  groupName?: string;
+}
+
+const { items, exclusive = false, groupName = 'faq' } = Astro.props;
+
+const rendered = await Promise.all(
+  items.map(async (item) => ({ item, Content: (await render(item)).Content })),
+);
+---
+
+<div class="flex flex-col gap-3">
+  {
+    rendered.map(({ item, Content }, i) => (
+      <details
+        class="faq card group overflow-hidden"
+        name={exclusive ? groupName : undefined}
+        data-reveal
+        style={`--reveal-delay:${i * 60}ms`}
+      >
+        <summary
+          class="flex cursor-pointer list-none items-center justify-between gap-5 p-5 text-left transition-colors duration-200 hover:bg-overlay sm:p-6"
+        >
+          <h3 class="text-[1.02rem] font-semibold leading-snug text-body sm:text-[1.08rem]">
+            {item.data.question}
+          </h3>
+
+          <span
+            class="chevron grid h-8 w-8 shrink-0 place-items-center rounded-full border border-line text-muted transition-[transform,color,border-color] duration-300 ease-[var(--ease-quint)]"
+            aria-hidden="true"
+          >
+            <Icon name="chevron-down" size={16} />
+          </span>
+        </summary>
+
+        <div class="faq-body">
+          <div class="faq-inner prose-faq px-5 pb-6 text-[0.94rem] leading-relaxed text-muted sm:px-6">
+            <Content />
+          </div>
+        </div>
+      </details>
+    ))
+  }
+</div>
+
+<style>
+  /* Remove the default disclosure triangle across engines. */
+  .faq summary::-webkit-details-marker {
+    display: none;
+  }
+  .faq summary::marker {
+    content: '';
+  }
+
+  .faq[open] .chevron {
+    transform: rotate(180deg);
+    color: var(--c-accent);
+    border-color: var(--c-accent-ring);
+  }
+
+  .faq[open] {
+    border-color: var(--c-line-strong);
+  }
+
+  /*
+    Animating to height:auto is not possible, but a 0fr → 1fr grid row is.
+    Requires the inner wrapper to have min-height:0 to collapse correctly.
+  */
+  .faq-body {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 320ms var(--ease-out-quint);
+  }
+
+  .faq[open] .faq-body {
+    grid-template-rows: 1fr;
+  }
+
+  .faq-inner {
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .prose-faq :global(p + p) {
+    margin-top: 0.85rem;
+  }
+
+  .prose-faq :global(ul) {
+    margin-top: 0.85rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding-left: 1.1rem;
+    list-style: disc;
+  }
+
+  .prose-faq :global(strong) {
+    color: var(--c-text);
+    font-weight: 600;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .faq-body {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  /**
+   * Safari and Firefox do not yet support the `name` attribute for exclusive
+   * accordions, so close siblings manually when one opens.
+   */
+  function initAccordions() {
+    const groups = new Map<string, HTMLDetailsElement[]>();
+
+    document.querySelectorAll<HTMLDetailsElement>('details.faq[name]').forEach((el) => {
+      const name = el.getAttribute('name');
+      if (!name) return;
+      groups.set(name, [...(groups.get(name) ?? []), el]);
+    });
+
+    if (!('name' in HTMLDetailsElement.prototype)) {
+      for (const items of groups.values()) {
+        items.forEach((el) => {
+          el.addEventListener('toggle', () => {
+            if (!el.open) return;
+            items.forEach((other) => other !== el && (other.open = false));
+          });
+        });
+      }
+    }
+  }
+
+  initAccordions();
+  document.addEventListener('astro:page-load', initAccordions);
+</script>

@@ -1,0 +1,40 @@
+---
+/**
+ * Animated statistic. Counts up once when scrolled into view, then stops —
+ * repeating counters are distracting on revisit.
+ *
+ * Renders the final value in the markup so the number is correct with JS
+ * disabled and for crawlers; the script only animates from zero.
+ */
+import type { Stat } from '@/types';
+
+interface Props extends Stat {
+  /** Stagger delay in ms, applied to the reveal transition. */
+  delay?: number;
+  size?: 'md' | 'lg';
+}
+
+const { value, suffix = '', prefix = '', label, description, delay = 0, size = 'md' } = Astro.props;
+---
+
+<div class="flex flex-col gap-1.5" data-reveal style={`--reveal-delay:${delay}ms`}>
+  <div
+    class:list={[
+      'font-display font-semibold text-body leading-none',
+      size === 'lg' ? 'text-h1' : 'text-[clamp(2rem,1.5rem+1.8vw,3rem)]',
+    ]}
+  >
+    <span aria-hidden="true">{prefix}</span><span
+      data-counter
+      data-target={value}
+      data-suffix={suffix}
+      data-prefix={prefix}
+      class="tabular"
+      aria-hidden="true">{value}</span
+    ><span aria-hidden="true" class="text-accent">{suffix}</span>
+    <span class="sr-only">{prefix}{value}{suffix}</span>
+  </div>
+
+  <div class="text-sm font-semibold text-body">{label}</div>
+  {description && <p class="text-sm text-subtle leading-relaxed">{description}</p>}
+</div>

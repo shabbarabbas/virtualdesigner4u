@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 880" width="1400" height="880" role="img" aria-label="Pricing">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#6FEEDE"/>
+      <stop offset="1" stop-color="#109385"/>
+    </linearGradient>
+    <filter id="soft"><feGaussianBlur stdDeviation="28"/></filter>
+  </defs>
+  <rect width="1400" height="880" fill="url(#g)"/>
+  <g filter="url(#soft)"><circle cx="129" cy="634" r="65" fill="#fff" opacity="0.109"/><rect x="1307" y="158" width="81.60000000000001" height="25.5" rx="12.75" fill="#fff" opacity="0.135"/><circle cx="225" cy="855" r="318" fill="#fff" opacity="0.078"/><rect x="1002" y="877" width="363.20000000000005" height="113.5" rx="56.75" fill="#fff" opacity="0.069"/><circle cx="173" cy="573" r="70" fill="#fff" opacity="0.067"/><rect x="885" y="834" width="86.4" height="27" rx="13.5" fill="#fff" opacity="0.144"/><circle cx="968" cy="106" r="139" fill="#fff" opacity="0.105"/></g>
+  <g><line x1="0" y1="0" x2="0" y2="880" stroke="#04231F" stroke-width="1" opacity="0.08"/><line x1="64" y1="0" x2="64" y2="880" stroke="#04231F" stroke-width="1" opacity="0.08"/><line x1="128" y1="0" x2="128" y2="880" stroke="#04231F" stroke-width="1" opacity="0.08"/><line x1="192" y1="0" x2="192" y2="880" stroke="#04231F" stroke-width="1" opacity="0.08"/><line x1="256" y1="0" x2="256" y2="880" stroke="#04231F" stroke-width="1" opacity="0.08"/><line x1="320" y1="0" x2="320" y2="880" stroke="#04231F" stroke-width="1" opacity="0.08"/><line x1="384" y1="0" x2="384" y2="880" stroke="#04231F" stroke-width="1" opacity="0.08"/><line x1="448" y1="0" x2="448" y2="880" stroke="#04231F" stroke-width="1" opacity="0.08"/><line x1="512" y1="0" x2="512" y2="880" stroke="#04231F" stroke-width="1" opacity="0.08"/><line x1="576" y1="0" x2="576" y2="880" stroke="#04231F" stroke-width="1" opacity="0.08"/><line x1="640" y1="0" x2="640" y2="880" stroke="#04231F" stroke-width="1" opacity="0.08"/><line x1="704" y1="0" x2="704" y2="880" stroke="#04231F" stroke-width="1" opacity="0.08"/><line x1="768" y1="0" x2="768" y2="880" stroke="#04231F" stroke-width="1" opacity="0.08"/><line x1="832" y1="0" x2="832" y2="880" stroke="#04231F" stroke-width="1" opacity="0.08"/><line x1="896" y1="0" x2="896" y2="880" stroke="#04231F" stroke-width="1" opacity="0.08"/><line x1="960" y1="0" x2="960" y2="880" stroke="#04231F" stroke-width="1" opacity="0.08"/><line x1="1024" y1="0" x2="1024" y2="880" stroke="#04231F" stroke-width="1" opacity="0.08"/><line x1="1088" y1="0" x2="1088" y2="880" stroke="#04231F" stroke-width="1" opacity="0.08"/><line x1="1152" y1="0" x2="1152" y2="880" stroke="#04231F" stroke-width="1" opacity="0.08"/><line x1="1216" y1="0" x2="1216" y2="880" stroke="#04231F" stroke-width="1" opacity="0.08"/><line x1="1280" y1="0" x2="1280" y2="880" stroke="#04231F" stroke-width="1" opacity="0.08"/><line x1="1344" y1="0" x2="1344" y2="880" stroke="#04231F" stroke-width="1" opacity="0.08"/></g>
+  <text x="700" y="428" text-anchor="middle"
+        font-family="Bricolage Grotesque, Helvetica, Arial, sans-serif" font-size="98"
+        font-weight="700" fill="#04231F" opacity="0.82">Pricing</text>
+  <text x="700" y="520" text-anchor="middle"
+        font-family="ui-monospace, Menlo, monospace" font-size="37"
+        letter-spacing="3" fill="#04231F" opacity="0.55">NORTHWIND</text>
+</svg>

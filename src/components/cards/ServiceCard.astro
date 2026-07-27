@@ -1,0 +1,64 @@
+---
+/** Service card — icon, summary and a short benefit list. */
+import Icon from '@/components/ui/Icon.astro';
+import { href, cx } from '@/lib/utils';
+import type { IconName } from '@/types';
+import type { Service } from '@/lib/content';
+
+interface Props {
+  service: Service;
+  delay?: number;
+  /** Compact cards omit the benefit list — used in dense grids. */
+  compact?: boolean;
+  class?: string;
+}
+
+const { service, delay = 0, compact = false, class: className = '' } = Astro.props;
+const { data } = service;
+const url = `/services#${service.id}`;
+---
+
+<article
+  class={cx('card card-hover card-sheen group relative flex flex-col gap-5 p-7', className)}
+  data-reveal
+  style={`--reveal-delay:${delay}ms`}
+>
+  <!-- Icon tile: rotates slightly on hover, which reads as responsive without being noisy. -->
+  <div
+    class="grid h-12 w-12 shrink-0 place-items-center rounded-2xl border border-accent/20 bg-accent-soft text-accent transition-transform duration-400 ease-[var(--ease-bounce)] group-hover:-rotate-6 group-hover:scale-110"
+  >
+    <Icon name={data.icon as IconName} size={22} />
+  </div>
+
+  <div class="flex flex-col gap-2.5">
+    <h3 class="text-h3 font-display text-body transition-colors duration-200 group-hover:text-accent">
+      <a href={href(url)} class="after:absolute after:inset-0 after:content-['']">
+        {data.title}
+      </a>
+    </h3>
+    <p class="text-[0.92rem] leading-relaxed text-muted">{data.summary}</p>
+  </div>
+
+  {
+    !compact && data.benefits.length > 0 && (
+      <ul class="flex flex-col gap-2.5 border-t border-line pt-5">
+        {data.benefits.slice(0, 3).map((benefit) => (
+          <li class="flex items-start gap-2.5 text-[0.86rem] leading-relaxed text-muted">
+            <Icon name="check" size={15} class="mt-0.5 shrink-0 text-accent" />
+            <span>{benefit}</span>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+
+  {
+    data.startingAt && (
+      <p class="mt-auto pt-1 font-mono text-[0.75rem] tracking-wide text-subtle">
+        {data.startingAt}
+        {data.timeline && <span class="text-line-strong"> · </span>}
+        {data.timeline}
+      </p>
+    )
+  }
+</article>

@@ -1,0 +1,85 @@
+---
+/**
+ * Root layout. Owns <html>, the head, chrome (header/footer) and global
+ * client behaviour. Every page composes this.
+ */
+import { ClientRouter } from 'astro:transitions';
+
+import BaseHead from '@/components/seo/BaseHead.astro';
+import Navbar from '@/components/layout/Navbar.astro';
+import Footer from '@/components/layout/Footer.astro';
+import ScrollProgress from '@/components/ui/ScrollProgress.astro';
+import ScrollToTop from '@/components/ui/ScrollToTop.astro';
+import { site } from '@/config/site';
+import type { SeoProps } from '@/types';
+
+// Self-hosted variable fonts — no third-party request, no FOUT, no CLS.
+import '@fontsource-variable/bricolage-grotesque';
+import '@fontsource-variable/manrope';
+import '@fontsource/instrument-serif/400-italic.css';
+import '@fontsource/instrument-serif/400.css';
+
+import '@/styles/global.css';
+
+interface Props extends SeoProps {
+  schema?: Record<string, unknown>[];
+  /** Adds the film-grain overlay. On by default. */
+  grain?: boolean;
+  class?: string;
+}
+
+const { grain = true, class: className = '', ...seo } = Astro.props;
+---
+
+<!doctype html>
+<html lang={site.language} data-theme="dark" class:list={[grain && 'grain']}>
+  <head>
+    <BaseHead {...seo} />
+    <!-- Smooth cross-document transitions; falls back to normal navigation. -->
+    <ClientRouter />
+  </head>
+
+  <body class:list={['flex min-h-dvh flex-col antialiased', className]}>
+    <a href="#main" class="skip-link">Skip to main content</a>
+
+    <ScrollProgress />
+    <Navbar />
+
+    <main id="main" tabindex="-1" class="flex-1 outline-none">
+      <slot />
+    </main>
+
+    <Footer />
+    <ScrollToTop />
+
+    <!--
+      Reveal animations are opt-in via CSS (elements start invisible). If JS
+      fails or is disabled, this stylesheet makes them visible again so no
+      content is ever lost.
+    -->
+    <noscript>
+      <style>
+        [data-reveal] {
+          opacity: 1 !important;
+          transform: none !important;
+        }
+        [data-meter] {
+          --level: var(--level-static, 0%);
+        }
+      </style>
+    </noscript>
+
+    <script>
+      import { initMotion, initScrollSpy } from '@/lib/motion';
+
+      const boot = () => {
+        initMotion();
+        initScrollSpy();
+      };
+
+      boot();
+      // Re-run after view transitions swap the DOM.
+      document.addEventListener('astro:page-load', boot);
+    </script>
+  </body>
+</html>

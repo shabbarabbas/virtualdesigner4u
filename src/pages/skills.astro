@@ -1,0 +1,197 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/sections/PageHeader.astro';
+import CTASection from '@/components/sections/CTASection.astro';
+import TechMarquee from '@/components/sections/TechMarquee.astro';
+import SkillCard from '@/components/cards/SkillCard.astro';
+import SectionHeading from '@/components/ui/SectionHeading.astro';
+import Icon from '@/components/ui/Icon.astro';
+
+import { skillCategories, featuredSkills } from '@/config/skills';
+import { toolkit } from '@/config/personal';
+import { site } from '@/config/site';
+import { breadcrumbSchema, personSchema } from '@/lib/schema';
+
+const origin = Astro.site?.origin ?? site.url;
+
+// Flatten once for the summary counts rather than in the template.
+const allSkills = skillCategories.flatMap((category) => category.skills);
+const expertCount = allSkills.filter((skill) => skill.level >= 90).length;
+---
+
+<BaseLayout
+  title="Skills"
+  description="A detailed breakdown of frontend, WordPress, game development, tooling, design and platform skills — with honest proficiency levels rather than a wall of logos."
+  schema={[
+    personSchema(origin),
+    breadcrumbSchema(origin, [{ name: 'Skills', path: '/skills' }]),
+  ]}
+>
+  <PageHeader
+    kicker="Skills"
+    title="An honest map of what I am *good* at"
+    lead="Proficiency levels reflect what I use in production regularly — not everything I have ever touched. Where I am still learning, it says so."
+    breadcrumbs={[{ label: 'Skills' }]}
+  />
+
+  <!-- ── Core strengths ───────────────────────────────────────────── -->
+  <section class="section-tight border-b border-line" aria-labelledby="core-heading">
+    <div class="shell">
+      <h2 id="core-heading" class="kicker mb-6">Core strengths</h2>
+
+      <ul class="flex flex-wrap gap-2.5">
+        {
+          featuredSkills.map((skill, i) => (
+            <li
+              class="rounded-[var(--radius-pill)] border border-accent/25 bg-accent-soft px-4 py-2 text-[0.86rem] font-medium text-accent"
+              data-reveal
+              style={`--reveal-delay:${i * 40}ms`}
+            >
+              {skill}
+            </li>
+          ))
+        }
+      </ul>
+
+      <dl class="mt-10 grid grid-cols-2 gap-6 sm:grid-cols-4">
+        {
+          [
+            { value: skillCategories.length, label: 'Skill areas' },
+            { value: allSkills.length, label: 'Tracked technologies' },
+            { value: expertCount, label: 'At expert level' },
+            { value: 15, label: 'Years applying them', suffix: '+' },
+          ].map((item, i) => (
+            <div class="flex flex-col gap-1" data-reveal style={`--reveal-delay:${i * 70}ms`}>
+              <dd class="font-display text-[1.9rem] font-semibold leading-none text-body">
+                <span data-counter data-target={item.value} class="tabular">
+                  {item.value}
+                </span>
+                <span class="text-accent">{item.suffix ?? ''}</span>
+              </dd>
+              <dt class="text-[0.84rem] text-muted">{item.label}</dt>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </section>
+
+  <!-- ── Category breakdown ───────────────────────────────────────── -->
+  <section class="section" aria-labelledby="breakdown-heading">
+    <div class="shell">
+      <SectionHeading
+        id="breakdown-heading"
+        kicker="Breakdown"
+        title="Six areas, in *detail*"
+        lead="Bars show relative depth, not marketing confidence. Ninety-plus means I could take a production issue in it at 2am."
+      />
+
+      <div class="mt-12 grid gap-5 lg:grid-cols-2">
+        {
+          skillCategories.map((category, i) => (
+            <SkillCard category={category} delay={(i % 2) * 90} />
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Marquee ──────────────────────────────────────────────────── -->
+  <section class="section-tight border-y border-line bg-canvas-alt">
+    <div class="shell-wide flex flex-col gap-6">
+      <p class="text-center font-mono text-[0.72rem] uppercase tracking-[0.18em] text-subtle">
+        Everyday stack
+      </p>
+      <TechMarquee />
+    </div>
+  </section>
+
+  <!-- ── Toolkit ──────────────────────────────────────────────────── -->
+  <section class="section" aria-labelledby="tools-heading">
+    <div class="shell">
+      <SectionHeading
+        id="tools-heading"
+        kicker="Tooling"
+        title="The software behind the *work*"
+        lead="Design, build, quality and delivery — the tools I open every week."
+      />
+
+      <div class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        {
+          toolkit.map((group, i) => (
+            <div class="card flex flex-col gap-4 p-6" data-reveal style={`--reveal-delay:${i * 70}ms`}>
+              <h3 class="font-mono text-[0.72rem] uppercase tracking-[0.16em] text-accent">
+                {group.group}
+              </h3>
+              <ul class="flex flex-col gap-2.5">
+                {group.items.map((item) => (
+                  <li class="flex items-center gap-2.5 text-[0.88rem] text-muted">
+                    <span class="h-1 w-1 shrink-0 rounded-full bg-line-strong" aria-hidden="true" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Learning ─────────────────────────────────────────────────── -->
+  <section class="section border-t border-line bg-canvas-alt" aria-labelledby="learning-heading">
+    <div class="shell max-w-3xl">
+      <SectionHeading
+        id="learning-heading"
+        kicker="Currently learning"
+        title="What I am *sharpening* right now"
+        lead="Fifteen years in, the fastest way to stagnate is to stop being a beginner at something."
+        align="center"
+      />
+
+      <ul class="mt-10 grid gap-4 sm:grid-cols-2">
+        {
+          [
+            {
+              icon: 'layers',
+              title: 'View Transitions API',
+              detail:
+                'Native cross-document transitions are finally shipping broadly. I am rebuilding older projects with them to replace framework-level routing hacks.',
+            },
+            {
+              icon: 'gamepad',
+              title: 'WebGPU for 2D',
+              detail:
+                'Evaluating whether WebGPU meaningfully improves particle-heavy Phaser scenes on mid-range Android hardware, or whether WebGL2 is still the pragmatic choice.',
+            },
+            {
+              icon: 'sparkles',
+              title: 'AI-assisted workflows',
+              detail:
+                'Using LLMs for scaffolding, test generation and code review — with a firm rule that nothing ships until I have read and understood every line.',
+            },
+            {
+              icon: 'shield',
+              title: 'WCAG 2.2 & EAA',
+              detail:
+                'The European Accessibility Act changes obligations for a lot of my clients. I am working through the new success criteria in real projects, not just reading them.',
+            },
+          ].map((item, i) => (
+            <li class="card flex flex-col gap-3 p-6" data-reveal style={`--reveal-delay:${i * 70}ms`}>
+              <span class="grid h-10 w-10 place-items-center rounded-xl border border-second/25 bg-second-soft text-second">
+                <Icon name={item.icon as never} size={18} />
+              </span>
+              <h3 class="font-display text-[1.02rem] font-semibold text-body">{item.title}</h3>
+              <p class="text-[0.88rem] leading-relaxed text-muted">{item.detail}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <CTASection
+    title="Need a specific skill on your *team*?"
+    lead="Tell me the stack and the problem. If it is in my wheelhouse I will say so — and if it is not, I will tell you that too."
+  />
+</BaseLayout>

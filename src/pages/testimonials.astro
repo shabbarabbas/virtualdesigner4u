@@ -1,0 +1,139 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/sections/PageHeader.astro';
+import CTASection from '@/components/sections/CTASection.astro';
+import TestimonialCard from '@/components/cards/TestimonialCard.astro';
+import Icon from '@/components/ui/Icon.astro';
+
+import { getTestimonials } from '@/lib/content';
+import { site } from '@/config/site';
+import { breadcrumbSchema } from '@/lib/schema';
+
+const origin = Astro.site?.origin ?? site.url;
+const testimonials = await getTestimonials();
+
+const average =
+  testimonials.reduce((total, item) => total + item.data.rating, 0) / testimonials.length;
+
+// Rounded to one decimal — anything more implies false precision.
+const rating = average.toFixed(1);
+---
+
+<BaseLayout
+  title="Testimonials"
+  description="Unedited feedback from founders, marketing leads, agency partners and educators who have worked with Shabbar Abbas."
+  schema={[breadcrumbSchema(origin, [{ name: 'Testimonials', path: '/testimonials' }])]}
+>
+  <PageHeader
+    kicker="Testimonials"
+    title="What clients say when I am not in the *room*"
+    lead="Every quote below comes from a real engagement. Names, roles and companies are published with permission."
+    breadcrumbs={[{ label: 'Testimonials' }]}
+  />
+
+  <!-- ── Summary ──────────────────────────────────────────────────── -->
+  <section class="section-tight border-b border-line">
+    <div class="shell">
+      <dl class="grid gap-8 sm:grid-cols-3">
+        <div class="flex flex-col gap-2" data-reveal>
+          <dd class="flex items-baseline gap-2">
+            <span class="font-display text-[2.4rem] font-bold leading-none text-body tabular">
+              {rating}
+            </span>
+            <span class="flex items-center gap-0.5" aria-hidden="true">
+              {
+                Array.from({ length: 5 }).map(() => (
+                  <Icon name="star" size={14} class="text-accent" />
+                ))
+              }
+            </span>
+          </dd>
+          <dt class="text-[0.88rem] text-muted">Average rating across published reviews</dt>
+        </div>
+
+        <div class="flex flex-col gap-2" data-reveal style="--reveal-delay:80ms">
+          <dd class="font-display text-[2.4rem] font-bold leading-none text-body">
+            <span data-counter data-target={testimonials.length} class="tabular">
+              {testimonials.length}
+            </span>
+          </dd>
+          <dt class="text-[0.88rem] text-muted">Published client reviews</dt>
+        </div>
+
+        <div class="flex flex-col gap-2" data-reveal style="--reveal-delay:160ms">
+          <dd class="font-display text-[2.4rem] font-bold leading-none text-body">
+            <span data-counter data-target={98} class="tabular">98</span><span class="text-accent"
+              >%</span
+            >
+          </dd>
+          <dt class="text-[0.88rem] text-muted">Clients who return or refer someone</dt>
+        </div>
+      </dl>
+    </div>
+  </section>
+
+  <!-- ── Reviews ──────────────────────────────────────────────────── -->
+  <section class="section" aria-labelledby="reviews-heading">
+    <div class="shell">
+      <h2 id="reviews-heading" class="sr-only">Client reviews</h2>
+
+      <!-- Masonry via CSS columns keeps varying-length quotes from leaving gaps. -->
+      <div class="reviews">
+        {
+          testimonials.map((testimonial, i) => (
+            <TestimonialCard testimonial={testimonial} delay={(i % 3) * 80} class="review" />
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Note on authenticity ─────────────────────────────────────── -->
+  <section class="section-tight border-y border-line bg-canvas-alt">
+    <div class="shell max-w-2xl">
+      <div class="card flex gap-4 p-6" data-reveal>
+        <Icon name="shield" size={20} class="mt-0.5 shrink-0 text-second" />
+        <div class="flex flex-col gap-2">
+          <h2 class="font-display text-[1.02rem] font-semibold text-body">
+            About these reviews
+          </h2>
+          <p class="text-[0.9rem] leading-relaxed text-muted">
+            Quotes are reproduced as written, with edits limited to removing confidential
+            details and fixing obvious typos. If you would like to speak to a past client
+            directly before committing to a project, ask — several are happy to take a call.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <CTASection
+    title="Ready to add *your* review to this page?"
+    lead="Every testimonial here started with a short message describing a problem. Yours can too."
+  />
+</BaseLayout>
+
+<style>
+  .reviews {
+    columns: 1;
+    column-gap: 1.25rem;
+  }
+
+  /* break-inside prevents a card splitting across two columns. */
+  .reviews :global(.review) {
+    break-inside: avoid;
+    margin-bottom: 1.25rem;
+  }
+
+  @media (min-width: 768px) {
+    .reviews {
+      columns: 2;
+    }
+  }
+
+  @media (min-width: 1180px) {
+    .reviews {
+      columns: 3;
+    }
+  }
+</style>

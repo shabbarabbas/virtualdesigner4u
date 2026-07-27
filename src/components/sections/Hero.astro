@@ -1,0 +1,190 @@
+---
+/**
+ * Home hero — the signature moment of the site.
+ *
+ * The headline animates in on page load with a staggered per-line reveal
+ * (CSS animation-delay, no JS). Everything below the fold uses the shared
+ * scroll-reveal system instead.
+ */
+import Button from '@/components/ui/Button.astro';
+import Icon from '@/components/ui/Icon.astro';
+import { personal, stats, socials } from '@/config/personal';
+import { href } from '@/lib/utils';
+---
+
+<section class="relative overflow-hidden pb-16 pt-[calc(var(--header-h)+3rem)] sm:pb-24 sm:pt-[calc(var(--header-h)+5rem)]">
+  <!-- Atmosphere layers -->
+  <div class="bg-grid absolute inset-0" aria-hidden="true"></div>
+  <div
+    class="aurora -top-24 left-[-6%] h-[26rem] w-[38rem]"
+    style="background:radial-gradient(circle,var(--c-accent),transparent 62%)"
+    aria-hidden="true"
+  >
+  </div>
+  <div
+    class="aurora right-[-8%] top-[18%] h-[24rem] w-[34rem]"
+    style="background:radial-gradient(circle,var(--c-second),transparent 62%);animation-delay:-11s"
+    aria-hidden="true"
+  >
+  </div>
+
+  <div class="shell relative">
+    <div class="grid items-center gap-14 lg:grid-cols-[1.15fr_0.85fr] lg:gap-16">
+      <!-- Copy -->
+      <div class="flex flex-col items-start gap-7">
+        {
+          personal.availability.open && (
+            <span class="hero-line glass inline-flex items-center gap-2.5 rounded-full px-4 py-2" style="--d:0ms">
+              <span class="relative flex h-2 w-2">
+                <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-75" />
+                <span class="relative inline-flex h-2 w-2 rounded-full bg-success" />
+              </span>
+              <span class="text-[0.8rem] font-medium text-body">{personal.availability.label}</span>
+            </span>
+          )
+        }
+
+        <h1 class="text-display font-display text-body">
+          <span class="hero-line block" style="--d:80ms">I build websites</span>
+          <span class="hero-line block" style="--d:170ms">
+            that <span class="text-accent-serif">earn</span> their
+          </span>
+          <span class="hero-line block text-gradient" style="--d:260ms">keep.</span>
+        </h1>
+
+        <p class="hero-line max-w-xl text-lead text-muted" style="--d:360ms">
+          {personal.intro}
+        </p>
+
+        <div class="hero-line flex flex-wrap items-center gap-3" style="--d:450ms">
+          <Button href="/contact" size="lg" icon="arrow-right">Start a project</Button>
+          <Button href="/portfolio" size="lg" variant="secondary">View selected work</Button>
+        </div>
+
+        <!-- Social + location strip -->
+        <div class="hero-line flex flex-wrap items-center gap-x-6 gap-y-3 pt-1" style="--d:540ms">
+          <ul class="flex items-center gap-2">
+            {
+              socials.map((social) => (
+                <li>
+                  <a
+                    href={social.href}
+                    target="_blank"
+                    rel="noopener noreferrer me"
+                    class="grid h-9 w-9 place-items-center rounded-full border border-line text-subtle transition-[color,border-color,transform] duration-200 hover:-translate-y-0.5 hover:border-accent/50 hover:text-accent"
+                    aria-label={`${personal.firstName} on ${social.label}`}
+                  >
+                    <Icon name={social.icon} size={16} />
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+
+          <span class="inline-flex items-center gap-1.5 font-mono text-[0.74rem] text-subtle">
+            <Icon name="map-pin" size={13} />
+            {personal.location} · Working worldwide
+          </span>
+        </div>
+      </div>
+
+      <!-- Portrait -->
+      <div class="hero-line relative mx-auto w-full max-w-sm lg:max-w-none" style="--d:300ms">
+        <div class="relative">
+          <!-- Offset frame behind the photo adds depth without a drop shadow. -->
+          <div
+            class="absolute -inset-3 -rotate-3 rounded-[2rem] border border-line-strong"
+            aria-hidden="true"
+          >
+          </div>
+
+          <div class="relative overflow-hidden rounded-[1.75rem] border border-line bg-surface">
+            <img
+              src={href(personal.photo)}
+              alt={personal.photoAlt}
+              width={900}
+              height={1100}
+              loading="eager"
+              fetchpriority="high"
+              decoding="async"
+              class="aspect-[4/5] w-full object-cover"
+            />
+
+            <!-- Bottom scrim so the caption stays legible over any photo. -->
+            <div
+              class="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-canvas via-canvas/60 to-transparent"
+              aria-hidden="true"
+            >
+            </div>
+
+            <div class="absolute inset-x-0 bottom-0 p-5">
+              <p class="font-display text-[1.05rem] font-semibold text-body">
+                {personal.fullName}
+              </p>
+              <p class="mt-0.5 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-subtle">
+                {personal.role}
+              </p>
+            </div>
+          </div>
+
+          <!-- Floating experience badge -->
+          <div
+            class="glass animate-float absolute -left-4 top-8 flex items-center gap-3 rounded-2xl px-4 py-3 shadow-float sm:-left-8"
+          >
+            <span class="font-display text-2xl font-bold leading-none text-accent">15+</span>
+            <span class="text-[0.72rem] leading-tight text-muted">
+              years<br />experience
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats bar -->
+    <dl
+      class="mt-16 grid grid-cols-2 gap-8 border-t border-line pt-10 sm:mt-20 sm:grid-cols-4 sm:gap-6"
+    >
+      {
+        stats.map((stat, i) => (
+          <div class="flex flex-col gap-1.5" data-reveal style={`--reveal-delay:${i * 90}ms`}>
+            <dd class="font-display text-[clamp(1.9rem,1.4rem+1.6vw,2.75rem)] font-semibold leading-none text-body">
+              <span data-counter data-target={stat.value} class="tabular">
+                {stat.value}
+              </span>
+              <span class="text-accent">{stat.suffix}</span>
+            </dd>
+            <dt class="text-[0.86rem] font-medium text-body">{stat.label}</dt>
+            <p class="text-[0.8rem] leading-relaxed text-subtle">{stat.description}</p>
+          </div>
+        ))
+      }
+    </dl>
+  </div>
+</section>
+
+<style>
+  /* One orchestrated page-load reveal beats scattered micro-animations. */
+  .hero-line {
+    animation: hero-in 800ms var(--ease-out-quint) both;
+    animation-delay: var(--d, 0ms);
+  }
+
+  @keyframes hero-in {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 22px, 0);
+      filter: blur(6px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+      filter: blur(0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-line {
+      animation: none;
+    }
+  }
+</style>

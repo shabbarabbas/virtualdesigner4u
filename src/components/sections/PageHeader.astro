@@ -1,0 +1,89 @@
+---
+/** Standard interior page header with ambient background and breadcrumbs. */
+import Icon from '@/components/ui/Icon.astro';
+import { href } from '@/lib/utils';
+
+interface Props {
+  kicker?: string;
+  title: string;
+  lead?: string;
+  breadcrumbs?: { label: string; href?: string }[];
+  align?: 'left' | 'center';
+}
+
+const { kicker, title, lead, breadcrumbs = [], align = 'left' } = Astro.props;
+const parts = title.split(/(\*[^*]+\*)/g).filter(Boolean);
+---
+
+<section class="relative overflow-hidden border-b border-line pb-14 pt-[calc(var(--header-h)+3.5rem)] sm:pb-20 sm:pt-[calc(var(--header-h)+5rem)]">
+  <!-- Atmosphere -->
+  <div class="bg-grid absolute inset-0 opacity-60" aria-hidden="true"></div>
+  <div
+    class="aurora -top-32 left-[10%] h-64 w-[34rem]"
+    style="background:radial-gradient(circle,var(--c-accent),transparent 65%)"
+    aria-hidden="true"
+  >
+  </div>
+  <div
+    class="aurora -top-20 right-[5%] h-56 w-[28rem]"
+    style="background:radial-gradient(circle,var(--c-second),transparent 65%);animation-delay:-8s"
+    aria-hidden="true"
+  >
+  </div>
+
+  <div class="shell relative">
+    {
+      breadcrumbs.length > 0 && (
+        <nav aria-label="Breadcrumb" class="mb-7">
+          <ol class="flex flex-wrap items-center gap-1.5 font-mono text-[0.72rem] text-subtle">
+            <li>
+              <a href={href('/')} class="transition-colors hover:text-accent">
+                Home
+              </a>
+            </li>
+            {breadcrumbs.map((crumb) => (
+              <li class="flex items-center gap-1.5">
+                <Icon name="chevron-down" size={12} class="-rotate-90 opacity-50" />
+                {crumb.href ? (
+                  <a href={href(crumb.href)} class="transition-colors hover:text-accent">
+                    {crumb.label}
+                  </a>
+                ) : (
+                  <span class="text-muted" aria-current="page">
+                    {crumb.label}
+                  </span>
+                )}
+              </li>
+            ))}
+          </ol>
+        </nav>
+      )
+    }
+
+    <div class:list={['flex max-w-3xl flex-col gap-5', align === 'center' && 'mx-auto text-center items-center']}>
+      {kicker && <span class="kicker" data-reveal>{kicker}</span>}
+
+      <h1 class="text-h1 font-display text-body" data-reveal style="--reveal-delay:60ms">
+        {
+          parts.map((part) =>
+            part.startsWith('*') && part.endsWith('*') ? (
+              <span class="text-accent-serif">{part.slice(1, -1)}</span>
+            ) : (
+              <Fragment>{part}</Fragment>
+            ),
+          )
+        }
+      </h1>
+
+      {
+        lead && (
+          <p class="text-lead text-muted" data-reveal style="--reveal-delay:130ms">
+            {lead}
+          </p>
+        )
+      }
+
+      <slot />
+    </div>
+  </div>
+</section>

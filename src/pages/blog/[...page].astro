@@ -1,0 +1,117 @@
+---
+import type { GetStaticPaths, Page } from 'astro';
+
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/sections/PageHeader.astro';
+import CTASection from '@/components/sections/CTASection.astro';
+import PostCard from '@/components/cards/PostCard.astro';
+import Pagination from '@/components/ui/Pagination.astro';
+import Icon from '@/components/ui/Icon.astro';
+
+import { getPosts, getPostCategories } from '@/lib/content';
+import { site } from '@/config/site';
+import { href } from '@/lib/utils';
+import { breadcrumbSchema } from '@/lib/schema';
+import type { Post } from '@/lib/content';
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const posts = await getPosts();
+  return paginate(posts, { pageSize: 9 });
+}) satisfies GetStaticPaths;
+
+interface Props {
+  page: Page<Post>;
+}
+
+const { page }: Props = Astro.props;
+const origin = Astro.site?.origin ?? site.url;
+const categories = await getPostCategories();
+
+// Only the first page gets the featured treatment; deeper pages stay uniform.
+const isFirstPage = page.currentPage === 1;
+---
+
+<BaseLayout
+  title={isFirstPage ? 'Blog' : `Blog — page ${page.currentPage}`}
+  description="Practical writing on web performance, accessibility, WordPress, Astro and HTML5 game development — from fifteen years of shipping client work."
+  schema={[breadcrumbSchema(origin, [{ name: 'Blog', path: '/blog' }])]}
+>
+  <PageHeader
+    kicker="Blog"
+    title="Notes from the *build*"
+    lead="No listicles and no hot takes — just the things I had to work out the hard way, written down so you do not have to."
+    breadcrumbs={[{ label: 'Blog' }]}
+  >
+    <div class="mt-4 flex flex-wrap items-center gap-2">
+      {categories.map((category) => <span class="topic">{category}</span>)}
+
+      <a href={href('/rss.xml')} class="topic topic-rss">
+        <Icon name="link" size={13} />
+        RSS
+      </a>
+    </div>
+  </PageHeader>
+
+  <section class="section" aria-labelledby="posts-heading">
+    <div class="shell">
+      <h2 id="posts-heading" class="sr-only">Articles</h2>
+
+      {
+        page.data.length === 0 ? (
+          <p class="py-20 text-center text-muted">No articles published yet — check back soon.</p>
+        ) : (
+          <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {page.data.map((post, i) => {
+              const showcase = isFirstPage && i === 0;
+              return (
+                <PostCard
+                  post={post}
+                  featured={showcase}
+                  delay={(i % 3) * 80}
+                  class={showcase ? 'md:col-span-2 lg:col-span-3' : ''}
+                />
+              );
+            })}
+          </div>
+        )
+      }
+
+      {
+        page.lastPage > 1 && (
+          <div class="mt-14">
+            <Pagination page={page} />
+          </div>
+        )
+      }
+    </div>
+  </section>
+
+  <CTASection
+    title="Prefer the *applied* version?"
+    lead="Everything I write about here is the same thinking I bring to client projects. Let's talk about yours."
+  />
+</BaseLayout>
+
+<style>
+  .topic {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--c-line);
+    background: var(--c-surface);
+    padding: 0.35rem 0.85rem;
+    font-size: 0.78rem;
+    color: var(--c-text-muted);
+  }
+
+  .topic-rss {
+    color: var(--c-accent);
+    border-color: var(--c-accent-ring);
+    transition: background-color var(--dur-fast) ease;
+  }
+
+  .topic-rss:hover {
+    background: var(--c-accent-soft);
+  }
+</style>

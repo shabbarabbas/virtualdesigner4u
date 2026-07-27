@@ -1,0 +1,100 @@
+---
+/**
+ * Testimonial card.
+ *
+ * `compact` shows only the pull-quote (home page carousel); the default shows
+ * the full rendered body from the Markdown entry.
+ */
+import Icon from '@/components/ui/Icon.astro';
+import { cx } from '@/lib/utils';
+import { render } from 'astro:content';
+import type { Testimonial } from '@/lib/content';
+
+interface Props {
+  testimonial: Testimonial;
+  compact?: boolean;
+  delay?: number;
+  class?: string;
+}
+
+const { testimonial, compact = false, delay = 0, class: className = '' } = Astro.props;
+const { data } = testimonial;
+
+// Only pay the render cost when the full body is actually shown.
+const Content = compact ? null : (await render(testimonial)).Content;
+
+const initials = data.author
+  .split(' ')
+  .map((part) => part[0])
+  .slice(0, 2)
+  .join('');
+---
+
+<figure
+  class={cx('card card-hover card-sheen relative flex flex-col gap-6 p-7', className)}
+  data-reveal
+  style={`--reveal-delay:${delay}ms`}
+>
+  <!-- Oversized decorative quote mark, deliberately low contrast. -->
+  <Icon
+    name="quote"
+    size={44}
+    class="absolute right-5 top-5 text-accent opacity-[0.07]"
+  />
+
+  <div class="flex items-center gap-0.5" aria-label={`Rated ${data.rating} out of 5`}>
+    {
+      Array.from({ length: 5 }).map((_, i) => (
+        <Icon
+          name="star"
+          size={15}
+          class={i < data.rating ? 'text-accent' : 'text-line-strong'}
+        />
+      ))
+    }
+  </div>
+
+  <blockquote class="relative flex-1">
+    {
+      compact ? (
+        <p class="text-[1.02rem] leading-relaxed text-body">“{data.quote}”</p>
+      ) : (
+        <div class="prose-testimonial flex flex-col gap-4 text-[0.95rem] leading-relaxed text-muted">
+          {Content && <Content />}
+        </div>
+      )
+    }
+  </blockquote>
+
+  <figcaption class="flex items-center gap-3.5 border-t border-line pt-5">
+    <span
+      class="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-line bg-overlay font-display text-[0.85rem] font-semibold text-accent"
+      aria-hidden="true"
+    >
+      {initials}
+    </span>
+
+    <span class="flex min-w-0 flex-col">
+      <span class="truncate text-[0.92rem] font-semibold text-body">{data.author}</span>
+      <span class="truncate text-[0.8rem] text-subtle">
+        {data.role}{data.company && `, ${data.company}`}
+      </span>
+      {
+        data.location && (
+          <span class="mt-0.5 inline-flex items-center gap-1 font-mono text-[0.68rem] uppercase tracking-wider text-subtle">
+            <Icon name="map-pin" size={11} />
+            {data.location}
+          </span>
+        )
+      }
+    </span>
+  </figcaption>
+</figure>
+
+<style>
+  /* First paragraph of a full testimonial reads as the pull-quote. */
+  .prose-testimonial :global(p:first-child) {
+    color: var(--c-text);
+    font-size: 1.02rem;
+  }
+</style>

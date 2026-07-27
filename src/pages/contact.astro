@@ -1,0 +1,216 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/sections/PageHeader.astro';
+import ContactForm from '@/components/forms/ContactForm.astro';
+import Accordion from '@/components/sections/Accordion.astro';
+import SectionHeading from '@/components/ui/SectionHeading.astro';
+import Icon from '@/components/ui/Icon.astro';
+import Button from '@/components/ui/Button.astro';
+
+import { getFaqs } from '@/lib/content';
+import { personal, socials, process } from '@/config/personal';
+import { contactChannels } from '@/config/contact-options';
+import { site } from '@/config/site';
+import { breadcrumbSchema, professionalServiceSchema } from '@/lib/schema';
+import type { IconName } from '@/types';
+
+const origin = Astro.site?.origin ?? site.url;
+const faqs = (await getFaqs())
+  .filter((faq) => faq.data.category === 'Process' || faq.data.category === 'Timeline')
+  .slice(0, 4);
+---
+
+<BaseLayout
+  title="Contact"
+  description={`Get in touch with ${personal.fullName} about a website, WordPress build, landing page or HTML5 game. ${personal.responseTime}.`}
+  schema={[
+    professionalServiceSchema(origin),
+    breadcrumbSchema(origin, [{ name: 'Contact', path: '/contact' }]),
+  ]}
+>
+  <PageHeader
+    kicker="Contact"
+    title="Tell me what you are *building*"
+    lead="A short message is enough to start. Include a link to your current site if you have one, and the outcome you are aiming for."
+    breadcrumbs={[{ label: 'Contact' }]}
+  />
+
+  <section class="section" aria-labelledby="contact-heading">
+    <div class="shell">
+      <h2 id="contact-heading" class="sr-only">Contact details and enquiry form</h2>
+
+      <div class="grid gap-10 lg:grid-cols-[1fr_minmax(0,20rem)] lg:gap-14">
+        <!-- ── Form ────────────────────────────────────────────── -->
+        <div data-reveal>
+          <!--
+            Rendered server-side; the client script upgrades it to an async
+            submit. Without JS it still posts directly to the form provider.
+          -->
+          <ContactForm />
+        </div>
+
+        <!-- ── Sidebar ─────────────────────────────────────────── -->
+        <aside class="flex flex-col gap-5" data-reveal="left">
+          <!-- Availability -->
+          <div class="card flex flex-col gap-3 p-6">
+            <div class="flex items-center gap-2.5">
+              <span class="relative flex h-2 w-2">
+                <span
+                  class="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-75"
+                ></span>
+                <span class="relative inline-flex h-2 w-2 rounded-full bg-success"></span>
+              </span>
+              <span class="text-[0.88rem] font-semibold text-body">
+                {personal.availability.label}
+              </span>
+            </div>
+            <p class="text-[0.86rem] leading-relaxed text-muted">
+              {personal.availability.detail}
+            </p>
+          </div>
+
+          <!-- Channels -->
+          <dl class="card divide-y divide-line">
+            {
+              contactChannels.map((channel) => (
+                <div class="flex items-start gap-3.5 px-5 py-4">
+                  <Icon
+                    name={channel.icon as IconName}
+                    size={16}
+                    class="mt-0.5 shrink-0 text-accent"
+                  />
+
+                  <div class="flex min-w-0 flex-col gap-0.5">
+                    <dt class="font-mono text-[0.66rem] uppercase tracking-[0.14em] text-subtle">
+                      {channel.label}
+                    </dt>
+                    <dd class="text-[0.88rem] font-medium text-body">
+                      {'href' in channel && channel.href ? (
+                        <a href={channel.href} class="break-all transition-colors hover:text-accent">
+                          {channel.value}
+                        </a>
+                      ) : (
+                        channel.value
+                      )}
+                    </dd>
+                    <p class="text-[0.78rem] leading-relaxed text-subtle">{channel.detail}</p>
+                  </div>
+                </div>
+              ))
+            }
+          </dl>
+
+          <!-- Socials -->
+          <div class="card flex flex-col gap-4 p-6">
+            <h3 class="font-mono text-[0.7rem] uppercase tracking-[0.16em] text-subtle">
+              Elsewhere
+            </h3>
+
+            <ul class="flex flex-col gap-3">
+              {
+                socials.map((social) => (
+                  <li>
+                    <a
+                      href={social.href}
+                      target="_blank"
+                      rel="noopener noreferrer me"
+                      class="group flex items-center gap-3 text-[0.88rem] text-muted transition-colors hover:text-body"
+                    >
+                      <Icon name={social.icon} size={16} class="text-subtle group-hover:text-accent" />
+                      <span>{social.label}</span>
+                      <span class="ml-auto font-mono text-[0.72rem] text-subtle">
+                        {social.handle}
+                      </span>
+                    </a>
+                  </li>
+                ))
+              }
+            </ul>
+          </div>
+
+          <!-- What happens next -->
+          <div class="card flex flex-col gap-4 p-6">
+            <h3 class="font-mono text-[0.7rem] uppercase tracking-[0.16em] text-subtle">
+              What happens next
+            </h3>
+
+            <ol class="flex flex-col gap-3.5">
+              {
+                process.slice(0, 3).map((step) => (
+                  <li class="flex gap-3">
+                    <span class="font-mono text-[0.74rem] font-semibold text-accent">
+                      {step.step}
+                    </span>
+                    <div class="flex flex-col gap-0.5">
+                      <p class="text-[0.86rem] font-medium text-body">{step.title}</p>
+                      <p class="text-[0.78rem] leading-relaxed text-subtle">
+                        {step.deliverables.join(' · ')}
+                      </p>
+                    </div>
+                  </li>
+                ))
+              }
+            </ol>
+
+            <Button href="/faq" size="sm" variant="ghost" full icon="arrow-right">
+              Read the full process
+            </Button>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FAQs ─────────────────────────────────────────────────────── -->
+  <section class="section border-t border-line bg-canvas-alt" aria-labelledby="contact-faq-heading">
+    <div class="shell max-w-3xl">
+      <SectionHeading
+        id="contact-faq-heading"
+        kicker="Before you write"
+        title="Answers that might save you a *message*"
+        align="center"
+      />
+
+      <div class="mt-10">
+        <Accordion items={faqs} exclusive groupName="contact-faq" />
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  /**
+   * Two small conveniences driven by the URL:
+   *  - `?service=…` from the services page pre-selects the matching chip.
+   *  - `?sent=1` is the no-JS success redirect target; show a confirmation.
+   */
+  function initContactQuery() {
+    const params = new URLSearchParams(window.location.search);
+
+    const service = params.get('service');
+    if (service) {
+      const chip = document.querySelector<HTMLInputElement>(
+        `input[name="services"][value="${CSS.escape(service)}"]`,
+      );
+      if (chip) chip.checked = true;
+
+      const message = document.querySelector<HTMLTextAreaElement>('#message');
+      if (message && !message.value) {
+        message.value = `I'm interested in ${service}. `;
+      }
+    }
+
+    if (params.get('sent') === '1') {
+      const status = document.querySelector<HTMLElement>('[data-status]');
+      if (status) {
+        status.textContent = 'Thanks — your message came through. I will reply shortly.';
+        status.dataset.tone = 'success';
+        status.hidden = false;
+        status.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+  }
+
+  initContactQuery();
+  document.addEventListener('astro:page-load', initContactQuery);
+</script>

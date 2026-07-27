@@ -1,0 +1,75 @@
+---
+/**
+ * Sticky table of contents for long-form posts.
+ *
+ * Only h2/h3 are listed — deeper levels make the list noisy. The active
+ * link is tracked by the shared scroll-spy in src/lib/motion.ts via
+ * `data-spy`.
+ */
+import type { MarkdownHeading } from 'astro';
+
+interface Props {
+  headings: MarkdownHeading[];
+  title?: string;
+}
+
+const { headings, title = 'On this page' } = Astro.props;
+const items = headings.filter((heading) => heading.depth === 2 || heading.depth === 3);
+---
+
+{
+  items.length > 1 && (
+    <nav class="toc" aria-labelledby="toc-title" data-spy>
+      <p id="toc-title" class="kicker mb-4">
+        {title}
+      </p>
+
+      <ol class="flex flex-col gap-0.5 border-l border-line">
+        {items.map((heading) => (
+          <li>
+            <a
+              href={`#${heading.slug}`}
+              class:list={[
+                'toc-link block border-l-2 border-transparent py-1.5 text-[0.84rem] leading-snug transition-[color,border-color] duration-200',
+                heading.depth === 2 ? 'pl-4' : 'pl-7 text-[0.8rem]',
+              ]}
+            >
+              {heading.text}
+            </a>
+          </li>
+        ))}
+      </ol>
+    </nav>
+  )
+}
+
+<style>
+  .toc {
+    position: sticky;
+    top: calc(var(--header-h) + 2rem);
+    max-height: calc(100vh - var(--header-h) - 4rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: none;
+  }
+
+  .toc::-webkit-scrollbar {
+    display: none;
+  }
+
+  .toc-link {
+    color: var(--c-text-subtle);
+    /* Pull the border over the parent list's own line. */
+    margin-left: -1px;
+  }
+
+  .toc-link:hover {
+    color: var(--c-text);
+  }
+
+  .toc-link[data-current] {
+    color: var(--c-accent);
+    border-left-color: var(--c-accent);
+    font-weight: 500;
+  }
+</style>

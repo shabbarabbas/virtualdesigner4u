@@ -1,0 +1,65 @@
+---
+/**
+ * Infinite technology marquee.
+ *
+ * The list is duplicated so a -50% translation loops seamlessly. The clone is
+ * aria-hidden so screen readers announce each technology once.
+ */
+import { techLogos } from '@/config/skills';
+
+interface Props {
+  speed?: number;
+  reverse?: boolean;
+}
+
+const { speed = 46, reverse = false } = Astro.props;
+const items = [...techLogos];
+---
+
+<div class="marquee mask-edges relative overflow-hidden py-2" role="group" aria-label="Technologies I work with">
+  <ul
+    class="animate-marquee flex w-max items-center gap-3"
+    style={`--marquee-dur:${speed}s;${reverse ? 'animation-direction:reverse;' : ''}`}
+  >
+    {
+      [0, 1].map((copy) => (
+        <Fragment>
+          {items.map((tech) => (
+            <li
+              class="group flex shrink-0 items-center gap-2.5 rounded-full border border-line bg-surface px-5 py-2.5 transition-[border-color,color] duration-300 hover:border-accent/40"
+              aria-hidden={copy === 1 ? 'true' : undefined}
+            >
+              <span
+                class="h-1.5 w-1.5 rounded-full bg-line-strong transition-colors duration-300 group-hover:bg-accent"
+                aria-hidden="true"
+              />
+              <span class="whitespace-nowrap font-display text-[0.9rem] font-medium text-muted transition-colors duration-300 group-hover:text-body">
+                {tech.abbr}
+              </span>
+            </li>
+          ))}
+        </Fragment>
+      ))
+    }
+  </ul>
+</div>
+
+<style>
+  /* Pausing on hover lets someone actually read a specific item. */
+  .marquee:hover ul {
+    animation-play-state: paused;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .marquee ul {
+      animation: none;
+      flex-wrap: wrap;
+      width: 100%;
+      justify-content: center;
+    }
+    /* The duplicate set is redundant once the animation is off. */
+    .marquee li[aria-hidden='true'] {
+      display: none;
+    }
+  }
+</style>

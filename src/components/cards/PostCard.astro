@@ -1,0 +1,88 @@
+---
+/** Blog post card. */
+import Icon from '@/components/ui/Icon.astro';
+import Tag from '@/components/ui/Tag.astro';
+import { href, cx, formatDate, isoDate, readingTime } from '@/lib/utils';
+import type { Post } from '@/lib/content';
+
+interface Props {
+  post: Post;
+  featured?: boolean;
+  delay?: number;
+  class?: string;
+}
+
+const { post, featured = false, delay = 0, class: className = '' } = Astro.props;
+const { data } = post;
+const url = `/blog/${post.id}`;
+const { minutes } = readingTime(post.body);
+---
+
+<article
+  class={cx(
+    'card card-hover card-sheen group relative flex overflow-hidden',
+    featured ? 'flex-col md:flex-row' : 'flex-col',
+    className,
+  )}
+  data-reveal
+  style={`--reveal-delay:${delay}ms`}
+>
+  {
+    data.cover && (
+      <div
+        class={cx(
+          'relative overflow-hidden',
+          featured ? 'aspect-[16/10] md:aspect-auto md:w-[44%]' : 'aspect-[16/9]',
+        )}
+      >
+        <img
+          src={href(data.cover)}
+          alt={data.coverAlt ?? ''}
+          width={1200}
+          height={630}
+          loading="lazy"
+          decoding="async"
+          class="h-full w-full object-cover transition-transform duration-700 ease-[var(--ease-quint)] group-hover:scale-[1.04]"
+        />
+      </div>
+    )
+  }
+
+  <div class="flex flex-1 flex-col gap-3.5 p-6">
+    <div class="flex flex-wrap items-center gap-2">
+      <Tag variant="accent">{data.category}</Tag>
+      <span class="inline-flex items-center gap-1.5 font-mono text-[0.7rem] text-subtle">
+        <Icon name="clock" size={12} />
+        {minutes} min read
+      </span>
+    </div>
+
+    <h3
+      class={cx(
+        'font-display text-body transition-colors duration-200 group-hover:text-accent',
+        featured ? 'text-h2' : 'text-h3',
+      )}
+    >
+      <a href={href(url)} class="after:absolute after:inset-0 after:content-['']">
+        {data.title}
+      </a>
+    </h3>
+
+    <p class="text-[0.92rem] leading-relaxed text-muted">{data.description}</p>
+
+    <div class="mt-auto flex items-center justify-between gap-4 pt-3">
+      <time datetime={isoDate(data.publishDate)} class="font-mono text-[0.72rem] text-subtle">
+        {formatDate(data.publishDate, { year: 'numeric', month: 'short', day: 'numeric' })}
+      </time>
+
+      <span class="flex items-center gap-1.5 text-[0.82rem] font-semibold text-accent">
+        Read
+        <Icon
+          name="arrow-right"
+          size={14}
+          class="transition-transform duration-300 ease-[var(--ease-quint)] group-hover:translate-x-1"
+        />
+      </span>
+    </div>
+  </div>
+</article>

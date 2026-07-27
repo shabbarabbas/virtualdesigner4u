@@ -1,0 +1,30 @@
+---
+/** Small metadata chip used for tech stacks, categories and tags. */
+import { cx } from '@/lib/utils';
+
+interface Props {
+  variant?: 'default' | 'accent' | 'second' | 'solid';
+  size?: 'sm' | 'md';
+  class?: string;
+}
+
+const { variant = 'default', size = 'sm', class: className = '' } = Astro.props;
+
+const variants: Record<string, string> = {
+  default: 'border-line bg-overlay text-muted',
+  accent: 'border-accent/30 bg-accent-soft text-accent',
+  second: 'border-second/30 bg-second-soft text-second',
+  solid: 'border-transparent bg-accent text-accent-contrast',
+};
+---
+
+<span
+  class={cx(
+    'inline-flex items-center gap-1.5 rounded-full border font-mono tracking-wide whitespace-nowrap',
+    size === 'sm' ? 'px-2.5 py-1 text-[0.68rem]' : 'px-3 py-1.5 text-[0.75rem]',
+    variants[variant],
+    className,
+  )}
+>
+  <slot />
+</span>

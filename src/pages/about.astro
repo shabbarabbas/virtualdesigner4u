@@ -1,0 +1,251 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/sections/PageHeader.astro';
+import CTASection from '@/components/sections/CTASection.astro';
+import Timeline from '@/components/sections/Timeline.astro';
+import SectionHeading from '@/components/ui/SectionHeading.astro';
+import Button from '@/components/ui/Button.astro';
+import Icon from '@/components/ui/Icon.astro';
+import Tag from '@/components/ui/Tag.astro';
+
+import { personal, values, process, toolkit, stats } from '@/config/personal';
+import { experience } from '@/config/experience';
+import { site } from '@/config/site';
+import { href } from '@/lib/utils';
+import { personSchema, breadcrumbSchema } from '@/lib/schema';
+
+const origin = Astro.site?.origin ?? site.url;
+---
+
+<BaseLayout
+  title="About"
+  description={`${personal.fullName} is a web designer, frontend developer and HTML5 game developer with 15+ years of experience building fast, accessible websites for clients worldwide.`}
+  schema={[
+    personSchema(origin),
+    breadcrumbSchema(origin, [{ name: 'About', path: '/about' }]),
+  ]}
+>
+  <PageHeader
+    kicker="About"
+    title="Fifteen years of building things that *stay* built"
+    lead={personal.short}
+    breadcrumbs={[{ label: 'About' }]}
+  />
+
+  <!-- ── Story ────────────────────────────────────────────────────── -->
+  <section class="section" aria-labelledby="story-heading">
+    <div class="shell">
+      <div class="grid gap-12 lg:grid-cols-[1fr_0.85fr] lg:gap-16">
+        <div class="flex flex-col gap-6">
+          <h2 id="story-heading" class="text-h2 font-display text-body" data-reveal>
+            How I got here
+          </h2>
+
+          {
+            personal.story.map((paragraph, i) => (
+              <p
+                class="text-[1.02rem] leading-relaxed text-muted"
+                data-reveal
+                style={`--reveal-delay:${(i + 1) * 80}ms`}
+              >
+                {paragraph}
+              </p>
+            ))
+          }
+
+          <div class="flex flex-wrap gap-3 pt-2" data-reveal style="--reveal-delay:320ms">
+            <Button href="/contact" icon="arrow-right">Work with me</Button>
+            {
+              personal.resume && (
+                <Button href={personal.resume} variant="outline" icon="external">
+                  Download CV
+                </Button>
+              )
+            }
+          </div>
+        </div>
+
+        <!-- Portrait + quick facts -->
+        <aside class="flex flex-col gap-6" data-reveal="left">
+          <div class="overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface">
+            <img
+              src={href(personal.photo)}
+              alt={personal.photoAlt}
+              width={900}
+              height={1100}
+              loading="lazy"
+              decoding="async"
+              class="aspect-[4/5] w-full object-cover"
+            />
+          </div>
+
+          <dl class="card divide-y divide-line">
+            {
+              [
+                { icon: 'briefcase', label: 'Role', value: personal.role },
+                { icon: 'map-pin', label: 'Based in', value: `${personal.location} · ${personal.timezone}` },
+                { icon: 'clock', label: 'Response time', value: personal.responseTime },
+                { icon: 'target', label: 'Availability', value: personal.availability.detail },
+              ].map((fact) => (
+                <div class="flex items-start gap-3.5 px-5 py-4">
+                  <Icon name={fact.icon as never} size={16} class="mt-0.5 shrink-0 text-accent" />
+                  <div class="flex flex-col gap-0.5">
+                    <dt class="font-mono text-[0.68rem] uppercase tracking-[0.14em] text-subtle">
+                      {fact.label}
+                    </dt>
+                    <dd class="text-[0.9rem] text-body">{fact.value}</dd>
+                  </div>
+                </div>
+              ))
+            }
+          </dl>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Numbers ──────────────────────────────────────────────────── -->
+  <section class="section-tight border-y border-line bg-canvas-alt">
+    <div class="shell">
+      <dl class="grid grid-cols-2 gap-8 sm:grid-cols-4">
+        {
+          stats.map((stat, i) => (
+            <div class="flex flex-col gap-1.5" data-reveal style={`--reveal-delay:${i * 80}ms`}>
+              <dd class="font-display text-[clamp(1.8rem,1.3rem+1.5vw,2.5rem)] font-semibold leading-none text-body">
+                <span data-counter data-target={stat.value} class="tabular">
+                  {stat.value}
+                </span>
+                <span class="text-accent">{stat.suffix}</span>
+              </dd>
+              <dt class="text-[0.85rem] font-medium text-body">{stat.label}</dt>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </section>
+
+  <!-- ── Principles ───────────────────────────────────────────────── -->
+  <section class="section" aria-labelledby="values-heading">
+    <div class="shell">
+      <SectionHeading
+        id="values-heading"
+        kicker="Principles"
+        title="Six things I will not *compromise* on"
+        lead="These are not marketing lines — they are the rules I apply when a deadline gets tight and something has to give."
+      />
+
+      <ul class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {
+          values.map((value, i) => (
+            <li
+              class="card card-hover flex flex-col gap-3.5 p-6"
+              data-reveal
+              style={`--reveal-delay:${i * 70}ms`}
+            >
+              <span class="grid h-11 w-11 place-items-center rounded-2xl border border-accent/20 bg-accent-soft text-accent">
+                <Icon name={value.icon} size={20} />
+              </span>
+              <h3 class="font-display text-[1.06rem] font-semibold text-body">{value.title}</h3>
+              <p class="text-[0.9rem] leading-relaxed text-muted">{value.description}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- ── Process ──────────────────────────────────────────────────── -->
+  <section class="section border-y border-line bg-canvas-alt" aria-labelledby="process-heading">
+    <div class="shell">
+      <SectionHeading
+        id="process-heading"
+        kicker="How I work"
+        title="A process designed to remove *surprises*"
+        lead="Six stages, agreed up front. You always know which one we are in, what is coming next, and what I need from you."
+      />
+
+      <ol class="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+        {
+          process.map((step, i) => (
+            <li
+              class="card card-sheen relative flex flex-col gap-3.5 p-6"
+              data-reveal
+              style={`--reveal-delay:${i * 70}ms`}
+            >
+              <span class="font-display text-[2.4rem] font-bold leading-none text-accent opacity-25">
+                {step.step}
+              </span>
+
+              <h3 class="font-display text-[1.06rem] font-semibold text-body">{step.title}</h3>
+              <p class="text-[0.9rem] leading-relaxed text-muted">{step.description}</p>
+
+              <ul class="mt-auto flex flex-wrap gap-2 pt-3">
+                {step.deliverables.map((item) => (
+                  <Tag>{item}</Tag>
+                ))}
+              </ul>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- ── Toolkit ──────────────────────────────────────────────────── -->
+  <section class="section" aria-labelledby="toolkit-heading">
+    <div class="shell">
+      <SectionHeading
+        id="toolkit-heading"
+        kicker="Toolkit"
+        title="What I actually *use*"
+        lead="Tools change; fundamentals do not. This is the current shortlist — chosen because it produces better work, not because it is fashionable."
+      />
+
+      <div class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        {
+          toolkit.map((group, i) => (
+            <div class="card flex flex-col gap-4 p-6" data-reveal style={`--reveal-delay:${i * 70}ms`}>
+              <h3 class="font-mono text-[0.72rem] uppercase tracking-[0.16em] text-accent">
+                {group.group}
+              </h3>
+              <ul class="flex flex-col gap-2.5">
+                {group.items.map((item) => (
+                  <li class="flex items-center gap-2.5 text-[0.88rem] text-muted">
+                    <span class="h-1 w-1 shrink-0 rounded-full bg-line-strong" aria-hidden="true" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Career snapshot ──────────────────────────────────────────── -->
+  <section class="section border-t border-line" aria-labelledby="career-heading">
+    <div class="shell">
+      <SectionHeading
+        id="career-heading"
+        kicker="Career"
+        title="The short *version*"
+        lead="Four roles, one continuous thread: making the web faster and easier to use."
+      >
+        <Button slot="action" href="/experience" variant="ghost" icon="arrow-right">
+          Full history
+        </Button>
+      </SectionHeading>
+
+      <div class="mt-12">
+        <Timeline items={experience} compact />
+      </div>
+    </div>
+  </section>
+
+  <CTASection
+    title="Think we would work well *together*?"
+    lead="Tell me about the project. If I am not the right fit, I will say so and point you somewhere better."
+  />
+</BaseLayout>

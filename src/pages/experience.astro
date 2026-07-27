@@ -1,0 +1,227 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/sections/PageHeader.astro';
+import CTASection from '@/components/sections/CTASection.astro';
+import Timeline from '@/components/sections/Timeline.astro';
+import SectionHeading from '@/components/ui/SectionHeading.astro';
+import Button from '@/components/ui/Button.astro';
+import Icon from '@/components/ui/Icon.astro';
+
+import { experience, achievements } from '@/config/experience';
+import { personal, industries, stats } from '@/config/personal';
+import { site } from '@/config/site';
+import { breadcrumbSchema, personSchema } from '@/lib/schema';
+
+const origin = Astro.site?.origin ?? site.url;
+
+// Derive the span from the data so it never goes stale.
+const firstYear = Number(experience.at(-1)?.start ?? 2009);
+const yearsActive = new Date().getFullYear() - firstYear;
+---
+
+<BaseLayout
+  title="Experience"
+  description={`${yearsActive}+ years of professional web design, frontend development and HTML5 game development — the full career history of ${personal.fullName}.`}
+  schema={[
+    personSchema(origin),
+    breadcrumbSchema(origin, [{ name: 'Experience', path: '/experience' }]),
+  ]}
+>
+  <PageHeader
+    kicker="Experience"
+    title={`${yearsActive}+ years, one continuous *thread*`}
+    lead="From table layouts and browser hacks to static site generators and Core Web Vitals — here is the full route, including what each stage taught me."
+    breadcrumbs={[{ label: 'Experience' }]}
+  >
+    <div class="mt-4 flex flex-wrap gap-3">
+      {
+        personal.resume && (
+          <Button href={personal.resume} variant="secondary" icon="external">
+            Download CV
+          </Button>
+        )
+      }
+      <Button href="/contact" variant="ghost" icon="arrow-right">Hire me</Button>
+    </div>
+  </PageHeader>
+
+  <!-- ── Timeline ─────────────────────────────────────────────────── -->
+  <section class="section" aria-labelledby="timeline-heading">
+    <div class="shell">
+      <SectionHeading
+        id="timeline-heading"
+        kicker="Career history"
+        title="Where I have *worked*"
+        lead="Four roles across agency, in-house and independent settings — each one adding a layer that the previous one was missing."
+      />
+
+      <div class="mt-12">
+        <Timeline items={experience} />
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Milestones ───────────────────────────────────────────────── -->
+  <section class="section border-y border-line bg-canvas-alt" aria-labelledby="milestones-heading">
+    <div class="shell">
+      <SectionHeading
+        id="milestones-heading"
+        kicker="Milestones"
+        title="Moments worth *marking*"
+        lead="Not awards — just the points where the work measurably levelled up."
+      />
+
+      <ol class="mt-12 grid gap-5 sm:grid-cols-2">
+        {
+          achievements.map((achievement, i) => (
+            <li
+              class="card card-hover flex gap-5 p-6"
+              data-reveal
+              style={`--reveal-delay:${i * 80}ms`}
+            >
+              <span class="font-mono text-[0.8rem] font-semibold text-accent">
+                {achievement.year}
+              </span>
+
+              <div class="flex flex-col gap-2">
+                <h3 class="font-display text-[1.05rem] font-semibold text-body">
+                  {achievement.title}
+                </h3>
+                <p class="text-[0.9rem] leading-relaxed text-muted">{achievement.description}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- ── By the numbers ───────────────────────────────────────────── -->
+  <section class="section" aria-labelledby="numbers-heading">
+    <div class="shell">
+      <SectionHeading
+        id="numbers-heading"
+        kicker="By the numbers"
+        title="The *scoreboard*"
+        align="center"
+      />
+
+      <dl class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {
+          stats.map((stat, i) => (
+            <div
+              class="card flex flex-col gap-2 p-7 text-center"
+              data-reveal
+              style={`--reveal-delay:${i * 80}ms`}
+            >
+              <dd class="text-gradient font-display text-[clamp(2rem,1.5rem+1.6vw,2.8rem)] font-bold leading-none">
+                <span data-counter data-target={stat.value} class="tabular">
+                  {stat.value}
+                </span>
+                {stat.suffix}
+              </dd>
+              <dt class="text-[0.9rem] font-medium text-body">{stat.label}</dt>
+              <p class="text-[0.82rem] leading-relaxed text-subtle">{stat.description}</p>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </section>
+
+  <!-- ── Industries ───────────────────────────────────────────────── -->
+  <section class="section border-t border-line" aria-labelledby="industries-heading">
+    <div class="shell">
+      <div class="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
+        <SectionHeading
+          id="industries-heading"
+          kicker="Sectors"
+          title="Industries I have *shipped* for"
+          lead="Different sectors, same discipline: understand the audience, remove the friction, measure the result. Domain knowledge is learnable — judgement is what takes fifteen years."
+          size="md"
+        />
+
+        <ul class="flex flex-wrap gap-2.5 self-start">
+          {
+            industries.map((industry, i) => (
+              <li
+                class="rounded-[var(--radius-pill)] border border-line bg-surface px-4 py-2 text-[0.86rem] text-muted transition-colors duration-200 hover:border-accent/40 hover:text-body"
+                data-reveal
+                style={`--reveal-delay:${i * 40}ms`}
+              >
+                {industry}
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Working style ────────────────────────────────────────────── -->
+  <section class="section border-t border-line bg-canvas-alt" aria-labelledby="style-heading">
+    <div class="shell">
+      <SectionHeading
+        id="style-heading"
+        kicker="Engagement models"
+        title="Three ways to *work* with me"
+        lead="Pick whichever matches how your team operates — the standard of work is identical."
+      />
+
+      <div class="mt-12 grid gap-5 lg:grid-cols-3">
+        {
+          [
+            {
+              icon: 'rocket',
+              title: 'Fixed-scope project',
+              detail:
+                'Best for defined work: a new site, a redesign, a game. Written scope, fixed price, fixed timeline, agreed before anything starts.',
+              points: ['Fixed quote', 'Milestone billing', '30-day post-launch support'],
+            },
+            {
+              icon: 'users',
+              title: 'Agency white-label',
+              detail:
+                'I plug into your team as the frontend or WordPress specialist. Your client relationship, your branding — I stay invisible and hit your deadlines.',
+              points: ['NDA-friendly', 'Your process & tools', 'Direct dev-to-dev comms'],
+            },
+            {
+              icon: 'wrench',
+              title: 'Retainer & support',
+              detail:
+                'Ongoing capacity for updates, improvements and emergencies. Ideal once a site is live and you need someone who already knows the codebase.',
+              points: ['Monthly hours', 'Priority response', 'Proactive monitoring'],
+            },
+          ].map((model, i) => (
+            <article
+              class="card card-hover flex flex-col gap-4 p-7"
+              data-reveal
+              style={`--reveal-delay:${i * 80}ms`}
+            >
+              <span class="grid h-11 w-11 place-items-center rounded-2xl border border-second/25 bg-second-soft text-second">
+                <Icon name={model.icon as never} size={20} />
+              </span>
+
+              <h3 class="font-display text-[1.08rem] font-semibold text-body">{model.title}</h3>
+              <p class="text-[0.9rem] leading-relaxed text-muted">{model.detail}</p>
+
+              <ul class="mt-auto flex flex-col gap-2 border-t border-line pt-4">
+                {model.points.map((point) => (
+                  <li class="flex items-center gap-2.5 text-[0.85rem] text-muted">
+                    <Icon name="check" size={14} class="shrink-0 text-accent" />
+                    {point}
+                  </li>
+                ))}
+              </ul>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <CTASection
+    title="Need someone who has *seen this before*?"
+    lead="Fifteen years of pattern recognition means fewer wrong turns, faster decisions and a shorter route to launch."
+  />
+</BaseLayout>

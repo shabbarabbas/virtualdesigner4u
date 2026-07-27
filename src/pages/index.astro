@@ -1,0 +1,209 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Hero from '@/components/sections/Hero.astro';
+import CTASection from '@/components/sections/CTASection.astro';
+import TechMarquee from '@/components/sections/TechMarquee.astro';
+import SectionHeading from '@/components/ui/SectionHeading.astro';
+import Button from '@/components/ui/Button.astro';
+import Icon from '@/components/ui/Icon.astro';
+import ServiceCard from '@/components/cards/ServiceCard.astro';
+import ProjectCard from '@/components/cards/ProjectCard.astro';
+import TestimonialCard from '@/components/cards/TestimonialCard.astro';
+
+import { getFeaturedServices, getFeaturedProjects, getFeaturedTestimonials } from '@/lib/content';
+import { personal, values } from '@/config/personal';
+import { skillCategories } from '@/config/skills';
+import { site } from '@/config/site';
+import { personSchema, websiteSchema, professionalServiceSchema } from '@/lib/schema';
+
+const origin = Astro.site?.origin ?? site.url;
+const services = await getFeaturedServices(6);
+const projects = await getFeaturedProjects(3);
+const testimonials = await getFeaturedTestimonials(3);
+---
+
+<BaseLayout
+  title="Home"
+  description={site.description}
+  schema={[personSchema(origin), websiteSchema(origin), professionalServiceSchema(origin)]}
+>
+  <Hero />
+
+  <!-- ── Technologies ─────────────────────────────────────────────── -->
+  <section class="section-tight border-y border-line bg-canvas-alt">
+    <div class="shell-wide flex flex-col gap-6">
+      <p class="text-center font-mono text-[0.72rem] uppercase tracking-[0.18em] text-subtle">
+        Tools I reach for every week
+      </p>
+      <TechMarquee />
+    </div>
+  </section>
+
+  <!-- ── Services ─────────────────────────────────────────────────── -->
+  <section class="section relative" aria-labelledby="services-heading">
+    <div class="shell">
+      <SectionHeading
+        id="services-heading"
+        kicker="What I do"
+        title="Services built around *outcomes*, not deliverables"
+        lead="Whether you need a brand-new site, a rescue mission on an existing one, or a browser game that actually holds attention — the goal is always the same: something measurably better than what you had."
+      >
+        <Button slot="action" href="/services" variant="ghost" icon="arrow-right">
+          All services
+        </Button>
+      </SectionHeading>
+
+      <div class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {services.map((service, i) => <ServiceCard service={service} delay={i * 70} />)}
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Selected work ────────────────────────────────────────────── -->
+  <section
+    class="section relative overflow-hidden border-y border-line bg-canvas-alt"
+    aria-labelledby="work-heading"
+  >
+    <div
+      class="aurora right-[-10%] top-1/4 h-80 w-[36rem]"
+      style="background:radial-gradient(circle,var(--c-second),transparent 65%)"
+      aria-hidden="true"
+    >
+    </div>
+
+    <div class="shell relative">
+      <SectionHeading
+        id="work-heading"
+        kicker="Selected work"
+        title="Projects with *receipts*"
+        lead="Every case study below includes the problem, the decisions I made, and the numbers afterwards — because a portfolio without results is just a gallery."
+      >
+        <Button slot="action" href="/portfolio" variant="ghost" icon="arrow-right">
+          Full portfolio
+        </Button>
+      </SectionHeading>
+
+      <div class="mt-12 grid gap-6 lg:grid-cols-2">
+        {
+          projects.map((project, i) => (
+            <ProjectCard
+              project={project}
+              featured={i === 0}
+              delay={i * 90}
+              class={i === 0 ? 'lg:col-span-2' : ''}
+            />
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Capability overview ──────────────────────────────────────── -->
+  <section class="section" aria-labelledby="skills-heading">
+    <div class="shell">
+      <div class="grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
+        <div class="lg:sticky lg:top-[calc(var(--header-h)+3rem)] lg:self-start">
+          <SectionHeading
+            id="skills-heading"
+            kicker="Capabilities"
+            title="Fifteen years of *range*"
+            lead="Deep in the frontend, comfortable across the stack, and genuinely specialised in the two areas most developers avoid: browser game development and performance rescue work."
+            size="md"
+          />
+
+          <div class="mt-8 flex flex-wrap gap-3">
+            <Button href="/skills" variant="secondary" icon="arrow-right">
+              Full skill breakdown
+            </Button>
+            <Button href="/experience" variant="ghost">Career history</Button>
+          </div>
+        </div>
+
+        <ul class="grid gap-4 sm:grid-cols-2">
+          {
+            skillCategories.map((category, i) => (
+              <li
+                class="card card-hover flex flex-col gap-3 p-6"
+                data-reveal
+                style={`--reveal-delay:${i * 70}ms`}
+              >
+                <span class="grid h-10 w-10 place-items-center rounded-xl border border-second/25 bg-second-soft text-second">
+                  <Icon name={category.icon} size={18} />
+                </span>
+
+                <h3 class="font-display text-[1.05rem] font-semibold text-body">
+                  {category.title}
+                </h3>
+
+                <p class="text-[0.86rem] leading-relaxed text-muted">{category.description}</p>
+
+                <p class="mt-auto pt-2 font-mono text-[0.7rem] text-subtle">
+                  {category.skills
+                    .slice(0, 4)
+                    .map((skill) => skill.name)
+                    .join(' · ')}
+                </p>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Testimonials ─────────────────────────────────────────────── -->
+  <section class="section border-y border-line bg-canvas-alt" aria-labelledby="testimonials-heading">
+    <div class="shell">
+      <SectionHeading
+        id="testimonials-heading"
+        kicker="Client feedback"
+        title="What it is like to *work with me*"
+        lead="Unedited feedback from founders, marketing leads and agency partners I have delivered for."
+        align="center"
+      />
+
+      <div class="mt-12 grid gap-5 lg:grid-cols-3">
+        {
+          testimonials.map((testimonial, i) => (
+            <TestimonialCard testimonial={testimonial} compact delay={i * 90} />
+          ))
+        }
+      </div>
+
+      <div class="mt-10 flex justify-center">
+        <Button href="/testimonials" variant="outline" icon="arrow-right">
+          Read all testimonials
+        </Button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Why work with me ─────────────────────────────────────────── -->
+  <section class="section" aria-labelledby="why-heading">
+    <div class="shell">
+      <SectionHeading
+        id="why-heading"
+        kicker="Why me"
+        title="The difference is in what I *refuse* to ship"
+        lead={personal.pitch}
+      />
+
+      <ul class="mt-12 grid gap-x-10 gap-y-9 sm:grid-cols-2 lg:grid-cols-3">
+        {
+          values.map((value, i) => (
+            <li class="flex flex-col gap-3" data-reveal style={`--reveal-delay:${i * 70}ms`}>
+              <span class="grid h-10 w-10 place-items-center rounded-xl border border-accent/20 bg-accent-soft text-accent">
+                <Icon name={value.icon} size={18} />
+              </span>
+
+              <h3 class="font-display text-[1.05rem] font-semibold text-body">{value.title}</h3>
+              <p class="text-[0.9rem] leading-relaxed text-muted">{value.description}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <CTASection />
+</BaseLayout>

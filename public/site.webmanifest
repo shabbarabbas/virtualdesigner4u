@@ -1,0 +1,27 @@
+{
+  "name": "Shabbar Abbas — Web & Game Developer",
+  "short_name": "VirtualDesigner4U",
+  "description": "Web design, frontend development, WordPress and HTML5 game development by Shabbar Abbas.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#08090c",
+  "theme_color": "#08090c",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": ["business", "portfolio", "developer"],
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

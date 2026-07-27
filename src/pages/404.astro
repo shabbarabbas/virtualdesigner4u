@@ -1,0 +1,70 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Button from '@/components/ui/Button.astro';
+import Icon from '@/components/ui/Icon.astro';
+
+import { mainNav } from '@/config/navigation';
+import { href } from '@/lib/utils';
+---
+
+<BaseLayout title="Page not found" description="That page does not exist." noindex>
+  <section
+    class="relative flex min-h-[80vh] items-center overflow-hidden py-24 pt-[calc(var(--header-h)+4rem)]"
+  >
+    <div class="bg-grid absolute inset-0" aria-hidden="true"></div>
+    <div
+      class="aurora left-1/2 top-1/3 h-80 w-[38rem] -translate-x-1/2"
+      style="background:radial-gradient(circle,var(--c-accent),transparent 65%)"
+      aria-hidden="true"
+    >
+    </div>
+
+    <div class="shell relative">
+      <div class="mx-auto flex max-w-xl flex-col items-center gap-6 text-center">
+        <p
+          class="text-gradient font-display text-[clamp(5rem,4rem+8vw,10rem)] font-bold leading-none"
+          aria-hidden="true"
+        >
+          404
+        </p>
+
+        <h1 class="text-h1 font-display text-body">
+          This page took a <span class="text-accent-serif">wrong turn</span>
+        </h1>
+
+        <p class="text-lead text-muted">
+          The link may be out of date, or the page may have moved. Nothing is broken on your
+          end — here are the places worth heading instead.
+        </p>
+
+        <div class="flex flex-wrap justify-center gap-3 pt-1">
+          <Button href="/" size="lg" icon="arrow-right">Back to home</Button>
+          <Button href="/portfolio" size="lg" variant="outline">Browse the work</Button>
+        </div>
+
+        <!-- Quick links so the page is genuinely useful, not just decorative. -->
+        <nav class="mt-8 w-full border-t border-line pt-8" aria-label="Suggested pages">
+          <p class="kicker mb-4">Or try one of these</p>
+
+          <ul class="flex flex-wrap justify-center gap-2">
+            {
+              mainNav
+                .filter((item) => item.href !== '/')
+                .map((item) => (
+                  <li>
+                    <a
+                      href={href(item.href)}
+                      class="inline-flex items-center gap-1.5 rounded-[var(--radius-pill)] border border-line bg-surface px-4 py-2 text-[0.85rem] text-muted transition-[color,border-color] duration-200 hover:border-accent/40 hover:text-accent"
+                    >
+                      {item.label}
+                      <Icon name="arrow-up-right" size={13} />
+                    </a>
+                  </li>
+                ))
+            }
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

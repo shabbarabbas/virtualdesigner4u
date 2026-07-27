@@ -1,0 +1,118 @@
+---
+/**
+ * Project card used on the portfolio grid and home page.
+ *
+ * The whole card is clickable via a stretched pseudo-element on the title
+ * link, which keeps a single, meaningful link in the accessibility tree while
+ * still giving a large mouse target.
+ */
+import Icon from '@/components/ui/Icon.astro';
+import Tag from '@/components/ui/Tag.astro';
+import { href, cx } from '@/lib/utils';
+import type { Project } from '@/lib/content';
+
+interface Props {
+  project: Project;
+  /** Featured cards span two columns and use a wider crop. */
+  featured?: boolean;
+  delay?: number;
+  class?: string;
+}
+
+const { project, featured = false, delay = 0, class: className = '' } = Astro.props;
+const { data } = project;
+const url = `/portfolio/${project.id}`;
+---
+
+<article
+  class={cx(
+    'card card-hover card-sheen group relative flex flex-col overflow-hidden',
+    className,
+  )}
+  data-reveal
+  data-category={data.category}
+  data-tech={data.tech.join('|')}
+  style={`--reveal-delay:${delay}ms;${data.accent ? `--card-accent:${data.accent};` : ''}`}
+>
+  <!-- Cover -->
+  <div class={cx('relative overflow-hidden', featured ? 'aspect-[16/9]' : 'aspect-[16/10]')}>
+    <img
+      src={href(data.cover)}
+      alt={data.coverAlt}
+      width={1600}
+      height={900}
+      loading={featured && delay === 0 ? 'eager' : 'lazy'}
+      decoding="async"
+      class="h-full w-full object-cover transition-transform duration-700 ease-[var(--ease-quint)] group-hover:scale-[1.04]"
+    />
+
+    <!-- Gradient scrim keeps the category chip legible on any artwork. -->
+    <div
+      class="pointer-events-none absolute inset-0 bg-gradient-to-t from-canvas/85 via-canvas/10 to-transparent"
+      aria-hidden="true"
+    >
+    </div>
+
+    <div class="absolute left-4 top-4 flex flex-wrap gap-2">
+      <Tag variant="solid">{data.category}</Tag>
+      {data.featured && featured && <Tag variant="second">Featured</Tag>}
+    </div>
+
+    <span
+      class="absolute right-4 top-4 rounded-full bg-canvas/70 px-2.5 py-1 font-mono text-[0.7rem] text-body backdrop-blur-sm"
+    >
+      {data.year}
+    </span>
+  </div>
+
+  <!-- Body -->
+  <div class="flex flex-1 flex-col gap-4 p-6">
+    <div class="flex flex-col gap-2">
+      <h3 class="text-h3 font-display text-body transition-colors duration-200 group-hover:text-accent">
+        <a href={href(url)} class="after:absolute after:inset-0 after:content-['']">
+          {data.title}
+        </a>
+      </h3>
+
+      {
+        data.client && (
+          <p class="font-mono text-[0.72rem] uppercase tracking-[0.12em] text-subtle">
+            {data.client}
+            {data.industry && <span class="text-line-strong"> · </span>}
+            {data.industry}
+          </p>
+        )
+      }
+    </div>
+
+    <p class="text-[0.92rem] leading-relaxed text-muted">{data.summary}</p>
+
+    <div class="mt-auto flex flex-wrap items-center gap-2 pt-2">
+      {data.tech.slice(0, featured ? 5 : 3).map((tech) => <Tag>{tech}</Tag>)}
+      {
+        data.tech.length > (featured ? 5 : 3) && (
+          <span class="font-mono text-[0.7rem] text-subtle">
+            +{data.tech.length - (featured ? 5 : 3)}
+          </span>
+        )
+      }
+    </div>
+
+    <div class="flex items-center gap-1.5 pt-1 text-[0.85rem] font-semibold text-accent">
+      <span>View case study</span>
+      <Icon
+        name="arrow-right"
+        size={15}
+        class="transition-transform duration-300 ease-[var(--ease-quint)] group-hover:translate-x-1"
+      />
+    </div>
+  </div>
+
+  <!-- Ambient accent glow on hover; purely decorative. -->
+  <div
+    class="pointer-events-none absolute -inset-px rounded-[inherit] opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+    style="background:radial-gradient(600px circle at 50% 0%,color-mix(in oklab,var(--card-accent,var(--c-accent)) 14%,transparent),transparent 60%)"
+    aria-hidden="true"
+  >
+  </div>
+</article>

@@ -1,0 +1,97 @@
+---
+/**
+ * Skill category panel with animated proficiency meters.
+ *
+ * `--level-static` carries the final width so the meter is still meaningful
+ * when JavaScript is unavailable (see the <noscript> block in BaseLayout).
+ */
+import Icon from '@/components/ui/Icon.astro';
+import { cx } from '@/lib/utils';
+import type { SkillCategory } from '@/types';
+
+interface Props {
+  category: SkillCategory;
+  delay?: number;
+  class?: string;
+}
+
+const { category, delay = 0, class: className = '' } = Astro.props;
+---
+
+<section
+  id={category.id}
+  class={cx('card card-sheen flex flex-col gap-6 p-7', className)}
+  data-reveal
+  style={`--reveal-delay:${delay}ms`}
+  aria-labelledby={`${category.id}-title`}
+>
+  <header class="flex items-start gap-4">
+    <span
+      class="grid h-11 w-11 shrink-0 place-items-center rounded-2xl border border-accent/20 bg-accent-soft text-accent"
+    >
+      <Icon name={category.icon} size={20} />
+    </span>
+
+    <div class="flex flex-col gap-1.5">
+      <h3 id={`${category.id}-title`} class="text-h3 font-display text-body">
+        {category.title}
+      </h3>
+      <p class="text-[0.88rem] leading-relaxed text-muted">{category.description}</p>
+    </div>
+  </header>
+
+  <ul class="flex flex-col gap-4 border-t border-line pt-6">
+    {
+      category.skills.map((skill, i) => (
+        <li class="flex flex-col gap-2">
+          <div class="flex items-baseline justify-between gap-4">
+            <span class="text-[0.9rem] font-medium text-body">
+              {skill.name}
+              {skill.note && (
+                <span class="ml-2 hidden font-mono text-[0.68rem] text-subtle sm:inline">
+                  {skill.note}
+                </span>
+              )}
+            </span>
+
+            <span class="tabular shrink-0 font-mono text-[0.72rem] text-subtle">
+              {skill.years ? `${skill.years}y` : ''}
+            </span>
+          </div>
+
+          <div
+            class="meter h-1.5 overflow-hidden rounded-full bg-overlay-strong"
+            role="meter"
+            aria-valuenow={skill.level}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-label={`${skill.name} proficiency`}
+          >
+            <span
+              class="meter-fill block h-full rounded-full"
+              data-meter
+              data-level={skill.level}
+              style={`--level-static:${skill.level}%;--meter-delay:${i * 60}ms`}
+            />
+          </div>
+        </li>
+      ))
+    }
+  </ul>
+</section>
+
+<style>
+  .meter-fill {
+    width: var(--level, 0%);
+    background: linear-gradient(90deg, var(--c-accent), var(--c-second));
+    transition: width 900ms var(--ease-out-quint);
+    transition-delay: var(--meter-delay, 0ms);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .meter-fill {
+      transition: none;
+      width: var(--level, var(--level-static, 0%));
+    }
+  }
+</style>

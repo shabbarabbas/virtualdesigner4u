@@ -1,0 +1,109 @@
+---
+/** Numbered pagination for the blog index. */
+import Icon from '@/components/ui/Icon.astro';
+import { href } from '@/lib/utils';
+import type { Page } from 'astro';
+
+interface Props {
+  page: Page<unknown>;
+  label?: string;
+}
+
+const { page, label = 'Blog pagination' } = Astro.props;
+
+/**
+ * Build a compact page list: always show first/last plus a window around the
+ * current page, collapsing the rest into ellipses.
+ */
+function pageList(current: number, total: number): (number | '…')[] {
+  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+
+  const window = new Set<number>([1, total, current, current - 1, current + 1]);
+  const sorted = [...window].filter((n) => n >= 1 && n <= total).sort((a, b) => a - b);
+
+  return sorted.flatMap((n, i) => (i > 0 && n - sorted[i - 1]! > 1 ? ['…' as const, n] : [n]));
+}
+
+const numbers = pageList(page.currentPage, page.lastPage);
+---
+
+{
+  page.lastPage > 1 && (
+    <nav class="flex items-center justify-center gap-1.5" aria-label={label}>
+      <a
+        href={page.url.prev ? href(page.url.prev) : undefined}
+        class:list={['page-btn', !page.url.prev && 'is-disabled']}
+        aria-disabled={!page.url.prev ? 'true' : undefined}
+        rel="prev"
+        aria-label="Previous page"
+      >
+        <Icon name="arrow-left" size={16} />
+      </a>
+
+      {numbers.map((n) =>
+        n === '…' ? (
+          <span class="grid h-10 w-10 place-items-center text-subtle" aria-hidden="true">
+            …
+          </span>
+        ) : (
+          <a
+            href={href(n === 1 ? '/blog' : `/blog/${n}`)}
+            class:list={['page-btn', n === page.currentPage && 'is-current']}
+            aria-current={n === page.currentPage ? 'page' : undefined}
+            aria-label={`Page ${n}`}
+          >
+            {n}
+          </a>
+        ),
+      )}
+
+      <a
+        href={page.url.next ? href(page.url.next) : undefined}
+        class:list={['page-btn', !page.url.next && 'is-disabled']}
+        aria-disabled={!page.url.next ? 'true' : undefined}
+        rel="next"
+        aria-label="Next page"
+      >
+        <Icon name="arrow-right" size={16} />
+      </a>
+    </nav>
+  )
+}
+
+<style>
+  .page-btn {
+    display: grid;
+    place-items: center;
+    height: 2.5rem;
+    min-width: 2.5rem;
+    padding-inline: 0.5rem;
+    border-radius: 0.7rem;
+    border: 1px solid var(--c-line);
+    background: var(--c-surface);
+    color: var(--c-text-muted);
+    font-size: 0.88rem;
+    font-variant-numeric: tabular-nums;
+    transition:
+      color var(--dur-fast) ease,
+      border-color var(--dur-fast) ease,
+      background-color var(--dur-fast) ease;
+  }
+
+  .page-btn:hover:not(.is-disabled):not(.is-current) {
+    color: var(--c-text);
+    border-color: var(--c-line-strong);
+  }
+
+  .page-btn.is-current {
+    background: var(--c-accent);
+    border-color: var(--c-accent);
+    color: var(--c-accent-contrast);
+    font-weight: 600;
+  }
+
+  /* Disabled arrows stay in the DOM for stable layout but are inert. */
+  .page-btn.is-disabled {
+    opacity: 0.4;
+    pointer-events: none;
+  }
+</style>

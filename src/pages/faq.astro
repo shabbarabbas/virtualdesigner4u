@@ -1,0 +1,162 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/sections/PageHeader.astro';
+import CTASection from '@/components/sections/CTASection.astro';
+import Accordion from '@/components/sections/Accordion.astro';
+import Button from '@/components/ui/Button.astro';
+import Icon from '@/components/ui/Icon.astro';
+
+import { getFaqsByCategory } from '@/lib/content';
+import { site } from '@/config/site';
+import { personal } from '@/config/personal';
+import { breadcrumbSchema, faqSchema } from '@/lib/schema';
+import { slugify } from '@/lib/utils';
+
+const origin = Astro.site?.origin ?? site.url;
+const grouped = await getFaqsByCategory();
+
+// Google's FAQPage schema needs plain-text answers, which is exactly what the
+// `plain` field in the collection exists for.
+const schemaItems = grouped.flatMap((group) =>
+  group.items.map((faq) => ({ question: faq.data.question, answer: faq.data.plain })),
+);
+
+const categoryIcons: Record<string, string> = {
+  Process: 'compass',
+  Pricing: 'target',
+  Timeline: 'calendar',
+  Support: 'wrench',
+  'Game Development': 'gamepad',
+  WordPress: 'wordpress',
+};
+---
+
+<BaseLayout
+  title="FAQ"
+  description="Answers to the questions clients ask most often — about process, pricing, timelines, support, WordPress and game development."
+  schema={[
+    faqSchema(origin, schemaItems),
+    breadcrumbSchema(origin, [{ name: 'FAQ', path: '/faq' }]),
+  ]}
+>
+  <PageHeader
+    kicker="FAQ"
+    title="The questions you were going to *ask* anyway"
+    lead="Straight answers about how I work, what things cost and what happens after launch — so your first email can be about your project instead."
+    breadcrumbs={[{ label: 'FAQ' }]}
+  />
+
+  <section class="section" aria-labelledby="faq-heading">
+    <div class="shell">
+      <h2 id="faq-heading" class="sr-only">Frequently asked questions</h2>
+
+      <div class="grid gap-12 lg:grid-cols-[minmax(0,15rem)_1fr] lg:gap-16">
+        <!-- ── Category nav ────────────────────────────────────── -->
+        <nav
+          class="lg:sticky lg:top-[calc(var(--header-h)+2.5rem)] lg:self-start"
+          aria-label="FAQ categories"
+          data-spy
+        >
+          <p class="kicker mb-4">Categories</p>
+
+          <ul class="flex flex-wrap gap-2 lg:flex-col lg:gap-1">
+            {
+              grouped.map(({ category, items }) => (
+                <li>
+                  <a
+                    href={`#${slugify(category)}`}
+                    class="cat-link flex items-center gap-2.5 rounded-lg px-3 py-2 text-[0.88rem] transition-colors duration-200"
+                  >
+                    <Icon name={(categoryIcons[category] ?? 'sparkles') as never} size={15} />
+                    <span>{category}</span>
+                    <span class="ml-auto hidden font-mono text-[0.7rem] opacity-60 lg:inline">
+                      {items.length}
+                    </span>
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+
+          <div class="mt-8 hidden lg:block">
+            <div class="card flex flex-col gap-3 p-5">
+              <Icon name="mail" size={18} class="text-accent" />
+              <p class="text-[0.85rem] leading-relaxed text-muted">
+                Question not covered here? Ask directly — I answer every message myself.
+              </p>
+              <Button href="/contact" size="sm" variant="outline" full icon="arrow-right">
+                Ask a question
+              </Button>
+            </div>
+          </div>
+        </nav>
+
+        <!-- ── Groups ──────────────────────────────────────────── -->
+        <div class="flex flex-col gap-14">
+          {
+            grouped.map(({ category, items }) => (
+              <section id={slugify(category)} class="scroll-mt-28" aria-labelledby={`${slugify(category)}-heading`}>
+                <div class="mb-6 flex items-center gap-3">
+                  <span class="grid h-9 w-9 place-items-center rounded-xl border border-accent/20 bg-accent-soft text-accent">
+                    <Icon name={(categoryIcons[category] ?? 'sparkles') as never} size={17} />
+                  </span>
+                  <h3 id={`${slugify(category)}-heading`} class="text-h3 font-display text-body">
+                    {category}
+                  </h3>
+                </div>
+
+                <Accordion items={items} exclusive groupName={slugify(category)} />
+              </section>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Still stuck ──────────────────────────────────────────────── -->
+  <section class="section-tight border-y border-line bg-canvas-alt">
+    <div class="shell max-w-2xl">
+      <div class="card flex flex-col items-center gap-4 p-8 text-center" data-reveal="scale">
+        <Icon name="heart" size={22} class="text-accent" />
+        <h2 class="text-h3 font-display text-body">Still not sure?</h2>
+        <p class="text-[0.94rem] leading-relaxed text-muted">
+          There is no obligation and no sales sequence waiting for you. Send a short message
+          describing what you need and you will get a straight answer — usually the same day.
+        </p>
+        <div class="flex flex-wrap justify-center gap-3 pt-1">
+          <Button href="/contact" icon="arrow-right">Get in touch</Button>
+          <Button href={`mailto:${personal.email}`} variant="ghost" icon="mail">
+            {personal.email}
+          </Button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <CTASection />
+</BaseLayout>
+
+<style>
+  .cat-link {
+    color: var(--c-text-muted);
+    border: 1px solid var(--c-line);
+  }
+
+  @media (min-width: 1024px) {
+    .cat-link {
+      border-color: transparent;
+    }
+  }
+
+  .cat-link:hover {
+    color: var(--c-text);
+    background: var(--c-overlay);
+  }
+
+  .cat-link[data-current] {
+    color: var(--c-accent);
+    background: var(--c-accent-soft);
+    border-color: var(--c-accent-ring);
+  }
+</style>

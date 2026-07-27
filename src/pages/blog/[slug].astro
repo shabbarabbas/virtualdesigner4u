@@ -1,0 +1,318 @@
+---
+import { render } from 'astro:content';
+import type { GetStaticPaths } from 'astro';
+
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import CTASection from '@/components/sections/CTASection.astro';
+import PostCard from '@/components/cards/PostCard.astro';
+import SectionHeading from '@/components/ui/SectionHeading.astro';
+import Prose from '@/components/ui/Prose.astro';
+import TableOfContents from '@/components/ui/TableOfContents.astro';
+import Tag from '@/components/ui/Tag.astro';
+import Icon from '@/components/ui/Icon.astro';
+import Button from '@/components/ui/Button.astro';
+
+import { getPosts, getRelatedPosts } from '@/lib/content';
+import { site } from '@/config/site';
+import { personal, socials } from '@/config/personal';
+import { href, formatDate, isoDate, readingTime, absoluteUrl } from '@/lib/utils';
+import { articleSchema, breadcrumbSchema } from '@/lib/schema';
+
+export const getStaticPaths = (async () => {
+  const posts = await getPosts();
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post, posts },
+  }));
+}) satisfies GetStaticPaths;
+
+const { post, posts } = Astro.props;
+const { data } = post;
+const { Content, headings } = await render(post);
+
+const origin = Astro.site?.origin ?? site.url;
+const related = getRelatedPosts(posts, post, 3);
+const { minutes, words } = readingTime(post.body);
+const url = `/blog/${post.id}`;
+
+// Pre-built share links — no third-party scripts, no tracking.
+const shareUrl = absoluteUrl(url, origin);
+const shareTargets = [
+  {
+    label: 'Share on LinkedIn',
+    icon: 'linkedin',
+    href: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`,
+  },
+  {
+    label: 'Share on X',
+    icon: 'twitter',
+    href: `https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(data.title)}`,
+  },
+] as const;
+---
+
+<BaseLayout
+  title={data.title}
+  description={data.seoDescription ?? data.description}
+  image={data.cover}
+  schema={[
+    articleSchema(origin, {
+      title: data.title,
+      description: data.description,
+      path: url,
+      image: data.cover,
+      published: data.publishDate,
+      updated: data.updatedDate,
+      tags: data.tags,
+    }),
+    breadcrumbSchema(origin, [
+      { name: 'Blog', path: '/blog' },
+      { name: data.title, path: url },
+    ]),
+  ]}
+  noindex={data.noindex}
+>
+  <article>
+    <!-- ── Header ─────────────────────────────────────────────────── -->
+    <header
+      class="relative overflow-hidden border-b border-line pb-12 pt-[calc(var(--header-h)+3rem)] sm:pb-16 sm:pt-[calc(var(--header-h)+4.5rem)]"
+    >
+      <div class="bg-grid absolute inset-0 opacity-50" aria-hidden="true"></div>
+      <div
+        class="aurora -top-24 left-[12%] h-64 w-[32rem]"
+        style="background:radial-gradient(circle,var(--c-accent),transparent 65%)"
+        aria-hidden="true"
+      >
+      </div>
+
+      <div class="shell relative max-w-3xl">
+        <nav aria-label="Breadcrumb" class="mb-6">
+          <ol class="flex flex-wrap items-center gap-1.5 font-mono text-[0.72rem] text-subtle">
+            <li><a href={href('/')} class="transition-colors hover:text-accent">Home</a></li>
+            <li class="flex items-center gap-1.5">
+              <Icon name="chevron-down" size={12} class="-rotate-90 opacity-50" />
+              <a href={href('/blog')} class="transition-colors hover:text-accent">Blog</a>
+            </li>
+          </ol>
+        </nav>
+
+        <div class="flex flex-col gap-5">
+          <div class="flex flex-wrap items-center gap-2">
+            <Tag variant="accent">{data.category}</Tag>
+            {data.tags.slice(0, 3).map((tag) => <Tag>{tag}</Tag>)}
+          </div>
+
+          <h1 class="text-h1 font-display text-body">{data.title}</h1>
+          <p class="text-lead text-muted">{data.description}</p>
+
+          <!-- Byline -->
+          <div class="flex flex-wrap items-center gap-x-5 gap-y-2 pt-2 font-mono text-[0.74rem] text-subtle">
+            <span class="inline-flex items-center gap-1.5">
+              <Icon name="users" size={13} />
+              {data.author}
+            </span>
+
+            <time datetime={isoDate(data.publishDate)} class="inline-flex items-center gap-1.5">
+              <Icon name="calendar" size={13} />
+              {formatDate(data.publishDate)}
+            </time>
+
+            <span class="inline-flex items-center gap-1.5">
+              <Icon name="clock" size={13} />
+              {minutes} min read · {words.toLocaleString('en-GB')} words
+            </span>
+
+            {
+              data.updatedDate && (
+                <span class="inline-flex items-center gap-1.5 text-second">
+                  <Icon name="check" size={13} />
+                  Updated {formatDate(data.updatedDate)}
+                </span>
+              )
+            }
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- ── Cover ──────────────────────────────────────────────────── -->
+    {
+      data.cover && (
+        <div class="shell max-w-4xl">
+          <figure class="section-tight">
+            <img
+              src={href(data.cover)}
+              alt={data.coverAlt ?? ''}
+              width={1200}
+              height={630}
+              loading="eager"
+              fetchpriority="high"
+              decoding="async"
+              class="w-full rounded-[var(--radius-card)] border border-line"
+            />
+          </figure>
+        </div>
+      )
+    }
+
+    <!-- ── Body ───────────────────────────────────────────────────── -->
+    <div class="section-tight">
+      <div class="shell">
+        <div class="grid gap-12 lg:grid-cols-[minmax(0,1fr)_15rem] lg:gap-16">
+          <div class="min-w-0">
+            <Prose size="lg" class="mx-auto">
+              <Content />
+            </Prose>
+
+            <!-- Footer: tags + share -->
+            <footer
+              class="mx-auto mt-14 flex max-w-[68ch] flex-col gap-6 border-t border-line pt-8"
+            >
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="font-mono text-[0.7rem] uppercase tracking-[0.14em] text-subtle">
+                  Filed under
+                </span>
+                {data.tags.map((tag) => <Tag>{tag}</Tag>)}
+              </div>
+
+              <div class="flex flex-wrap items-center gap-3">
+                <span class="font-mono text-[0.7rem] uppercase tracking-[0.14em] text-subtle">
+                  Share
+                </span>
+
+                {
+                  shareTargets.map((target) => (
+                    <a
+                      href={target.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="grid h-9 w-9 place-items-center rounded-full border border-line text-subtle transition-[color,border-color,transform] duration-200 hover:-translate-y-0.5 hover:border-accent/50 hover:text-accent"
+                      aria-label={target.label}
+                    >
+                      <Icon name={target.icon} size={15} />
+                    </a>
+                  ))
+                }
+
+                <button
+                  type="button"
+                  class="inline-flex items-center gap-2 rounded-full border border-line px-3.5 py-2 text-[0.8rem] text-subtle transition-[color,border-color] duration-200 hover:border-accent/50 hover:text-accent"
+                  data-copy-link
+                  data-url={shareUrl}
+                >
+                  <Icon name="copy" size={14} />
+                  <span data-copy-label>Copy link</span>
+                </button>
+              </div>
+
+              <!-- Author card -->
+              <div class="card mt-4 flex flex-col gap-4 p-6 sm:flex-row sm:items-center">
+                <img
+                  src={href(personal.photo)}
+                  alt=""
+                  width={112}
+                  height={112}
+                  loading="lazy"
+                  decoding="async"
+                  class="h-16 w-16 shrink-0 rounded-full border border-line object-cover"
+                />
+
+                <div class="flex flex-col gap-1.5">
+                  <p class="font-display text-[1.02rem] font-semibold text-body">
+                    {personal.fullName}
+                  </p>
+                  <p class="text-[0.86rem] leading-relaxed text-muted">{personal.short}</p>
+
+                  <ul class="mt-1 flex items-center gap-3">
+                    {
+                      socials.map((social) => (
+                        <li>
+                          <a
+                            href={social.href}
+                            target="_blank"
+                            rel="noopener noreferrer me"
+                            class="text-subtle transition-colors hover:text-accent"
+                            aria-label={social.label}
+                          >
+                            <Icon name={social.icon} size={16} />
+                          </a>
+                        </li>
+                      ))
+                    }
+                  </ul>
+                </div>
+
+                <Button href="/contact" size="sm" class="sm:ml-auto sm:shrink-0" icon="arrow-right">
+                  Work with me
+                </Button>
+              </div>
+            </footer>
+          </div>
+
+          <!-- Sidebar -->
+          <aside class="hidden lg:block">
+            <TableOfContents headings={headings} />
+          </aside>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- ── Related ────────────────────────────────────────────────────  -->
+  {
+    related.length > 0 && (
+      <section class="section border-t border-line bg-canvas-alt" aria-labelledby="related-heading">
+        <div class="shell">
+          <SectionHeading
+            id="related-heading"
+            kicker="Keep reading"
+            title="Related *articles*"
+            size="md"
+          >
+            <Button slot="action" href="/blog" variant="ghost" icon="arrow-right">
+              All articles
+            </Button>
+          </SectionHeading>
+
+          <div class="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {related.map((item, i) => (
+              <PostCard post={item} delay={i * 80} />
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <CTASection />
+</BaseLayout>
+
+<script>
+  function initCopyLink() {
+    document.querySelectorAll<HTMLButtonElement>('[data-copy-link]').forEach((button) => {
+      if (button.dataset.bound === 'true') return;
+      button.dataset.bound = 'true';
+
+      button.addEventListener('click', async () => {
+        const label = button.querySelector('[data-copy-label]');
+        const url = button.dataset.url ?? window.location.href;
+
+        try {
+          await navigator.clipboard.writeText(url);
+          if (label) label.textContent = 'Copied';
+        } catch {
+          // Clipboard access can be blocked; fall back to selecting the URL.
+          if (label) label.textContent = 'Press ⌘C';
+        }
+
+        // Revert the label so the control is reusable.
+        window.setTimeout(() => {
+          if (label) label.textContent = 'Copy link';
+        }, 2000);
+      });
+    });
+  }
+
+  initCopyLink();
+  document.addEventListener('astro:page-load', initCopyLink);
+</script>
