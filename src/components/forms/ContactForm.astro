@@ -48,11 +48,11 @@ const successUrl = new URL(successPath, site.url).href;
 
   <!--
     Honeypot: hidden from humans and assistive tech, irresistible to bots.
-    Web3Forms and FormSubmit both reject submissions where this is filled.
+    Every supported provider silently discards submissions where this is filled.
   -->
   <div class="hidden" aria-hidden="true">
     <label for="botcheck">Leave this field empty</label>
-    <input id="botcheck" type="checkbox" name={honeypot} tabindex="-1" autocomplete="off" />
+    <input id="botcheck" type="text" name={honeypot} tabindex="-1" autocomplete="off" />
   </div>
 
   <div class="grid gap-5 sm:grid-cols-2">
@@ -388,7 +388,10 @@ const successUrl = new URL(successPath, site.url).href;
               : { 'Content-Type': 'application/json', Accept: 'application/json' },
         });
 
-        if (!response.ok) throw new Error(`Request failed with status ${response.status}`);
+        if (!response.ok) {
+          const detail = await response.text();
+          throw new Error(`Request failed with status ${response.status}: ${detail}`);
+        }
 
         form.reset();
         form.querySelectorAll('[data-error]').forEach((el) => ((el as HTMLElement).hidden = true));
@@ -396,7 +399,8 @@ const successUrl = new URL(successPath, site.url).href;
           'Thanks — your message is on its way. I reply to every enquiry, usually within one business day.',
           'success',
         );
-      } catch {
+      } catch (error) {
+        console.error('[contact-form]', error);
         setStatus(
           'Something went wrong sending the form. Please email hello@virtualdesigner4u.com directly and I will pick it up straight away.',
           'error',

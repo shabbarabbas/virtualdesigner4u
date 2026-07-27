@@ -58,16 +58,18 @@ export const site = {
  * Optionally override at build time with PUBLIC_FORM_ENDPOINT.
  */
 export const contactForm = {
-  provider: 'web3forms' as 'web3forms' | 'formspree' | 'formsubmit',
-  // TODO: replace with your own Web3Forms access key (free at web3forms.com).
+  provider: 'formspree' as 'web3forms' | 'formspree' | 'formsubmit',
   endpoint:
     import.meta.env.PUBLIC_FORM_ENDPOINT ?? 'https://formspree.io/f/mrenrolr',
   /** Subject line prefix applied to the notification email. */
   subjectPrefix: 'New enquiry from virtualdesigner4u.com',
   /** Where the user lands after a successful submit (same-site path). */
   successPath: '/contact?sent=1',
-  /** Honeypot field name — bots fill it, humans never see it. */
-  honeypot: 'botcheck',
+  /**
+   * Honeypot field name — bots fill it, humans never see it.
+   * Formspree expects `_gotcha`; Web3Forms/FormSubmit expect `botcheck`.
+   */
+  honeypot: '_gotcha',
 } as const;
 
 /** Optional privacy-friendly analytics. Leave `enabled: false` to ship none. */
