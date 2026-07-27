@@ -77,12 +77,4 @@
     const current = document.documentElement.getAttribute('data-theme');
     applyTheme(current === 'light' ? 'dark' : 'light');
   });
-
-  // Follow the OS only while the visitor has not made an explicit choice.
-  window
-    .matchMedia('(prefers-color-scheme: light)')
-    .addEventListener('change', (event) => {
-      if (localStorage.getItem(THEME_KEY)) return;
-      document.documentElement.setAttribute('data-theme', event.matches ? 'light' : 'dark');
-    });
 </script>

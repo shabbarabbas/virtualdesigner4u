@@ -124,10 +124,10 @@ const jsonLd = buildGraph([personSchema(origin), websiteSchema(origin), ...schem
   (function () {
     function applyStoredTheme() {
       try {
+        // Dark is the default. The OS preference is deliberately ignored —
+        // only an explicit choice from the toggle switches to light.
         var stored = localStorage.getItem('theme');
-        var prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
-        // Dark is the site default; only honour an explicit choice or a light OS preference.
-        var theme = stored || (prefersLight ? 'light' : 'dark');
+        var theme = stored === 'light' ? 'light' : 'dark';
         document.documentElement.setAttribute('data-theme', theme);
         var meta = document.querySelector('meta[name="theme-color"]');
         if (meta) meta.setAttribute('content', theme === 'light' ? '#fbf9f6' : '#08090c');
