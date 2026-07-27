@@ -115,19 +115,34 @@ const jsonLd = buildGraph([personSchema(origin), websiteSchema(origin), ...schem
 <!--
   Theme bootstrap. Must run before paint to avoid a flash of the wrong theme,
   so it is inlined and blocking rather than deferred.
+
+  It also re-runs on `astro:after-swap`: the ClientRouter copies the incoming
+  document's <html> attributes over the live ones, which would otherwise reset
+  `data-theme` to the static default on every client-side navigation.
 -->
 <script is:inline>
   (function () {
-    try {
-      var stored = localStorage.getItem('theme');
-      var prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
-      // Dark is the site default; only honour an explicit choice or a light OS preference.
-      var theme = stored || (prefersLight ? 'light' : 'dark');
-      document.documentElement.setAttribute('data-theme', theme);
-      var meta = document.querySelector('meta[name="theme-color"]');
-      if (meta) meta.setAttribute('content', theme === 'light' ? '#fbf9f6' : '#08090c');
-    } catch (e) {
-      document.documentElement.setAttribute('data-theme', 'dark');
+    function applyStoredTheme() {
+      try {
+        var stored = localStorage.getItem('theme');
+        var prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+        // Dark is the site default; only honour an explicit choice or a light OS preference.
+        var theme = stored || (prefersLight ? 'light' : 'dark');
+        document.documentElement.setAttribute('data-theme', theme);
+        var meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) meta.setAttribute('content', theme === 'light' ? '#fbf9f6' : '#08090c');
+      } catch (e) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+    }
+
+    applyStoredTheme();
+
+    // Guard against double-binding if this inline script is re-evaluated.
+    if (!window.__themeSwapBound) {
+      window.__themeSwapBound = true;
+      // Fires after the new DOM is in place but before the next paint.
+      document.addEventListener('astro:after-swap', applyStoredTheme);
     }
   })();
 </script>
