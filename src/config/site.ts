@@ -61,7 +61,7 @@ export const contactForm = {
   provider: 'web3forms' as 'web3forms' | 'formspree' | 'formsubmit',
   // TODO: replace with your own Web3Forms access key (free at web3forms.com).
   endpoint:
-    import.meta.env.PUBLIC_FORM_ENDPOINT ?? 'YOUR_WEB3FORMS_ACCESS_KEY_HERE',
+    import.meta.env.PUBLIC_FORM_ENDPOINT ?? 'https://formspree.io/f/mrenrolr',
   /** Subject line prefix applied to the notification email. */
   subjectPrefix: 'New enquiry from virtualdesigner4u.com',
   /** Where the user lands after a successful submit (same-site path). */
@@ -81,7 +81,7 @@ export const analytics = {
 export const seoDefaults = {
   titleTemplate: (title: string) =>
     title === 'Home' ? `${site.brand}` : `${title} · ${site.name}`,
-  twitterHandle: '@shabbarabbas', // TODO: replace or set to '' to omit.
+  twitterHandle: '@shabbar_abbas', // TODO: replace or set to '' to omit.
   /** JSON-LD organisation/person identity reused across pages. */
   jsonLdId: `${site.url}/#person`,
 } as const;

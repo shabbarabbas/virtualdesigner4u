@@ -17,7 +17,7 @@ export const personal = {
   email: 'hello@virtualdesigner4u.com',
   phone: '', // Optional — leave empty to hide from the contact page.
   /** Portrait lives in /public/images. Replace with your own photo. */
-  photo: '/images/shabbar-abbas.svg',
+  photo: '/images/shabbar-abbas.jpg',
   photoAlt: 'Portrait of Shabbar Abbas, web designer and developer',
   /**
    * Downloadable CV. Drop the file in /public and set the path here — the
