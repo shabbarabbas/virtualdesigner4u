@@ -15,7 +15,7 @@ import { breadcrumbSchema, personSchema } from '@/lib/schema';
 const origin = Astro.site?.origin ?? site.url;
 
 // Derive the span from the data so it never goes stale.
-const firstYear = Number(experience.at(-1)?.start ?? 2009);
+const firstYear = Number(experience.at(-1)?.start ?? 2002);
 const yearsActive = new Date().getFullYear() - firstYear;
 ---
 
@@ -52,7 +52,7 @@ const yearsActive = new Date().getFullYear() - firstYear;
         id="timeline-heading"
         kicker="Career history"
         title="Where I have *worked*"
-        lead="Four roles across agency, in-house and independent settings — each one adding a layer that the previous one was missing."
+        lead="Six roles across defence multimedia, agency work, US product teams and my own independent practice — two of them still running today."
       />
 
       <div class="mt-12">

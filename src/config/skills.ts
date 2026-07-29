@@ -3,6 +3,10 @@ import type { SkillCategory, TechLogo } from '@/types';
 /**
  * Skill matrix. `level` drives the animated meters (0–100) and `years` is
  * shown as a secondary signal — both are self-assessed, so keep them honest.
+ *
+ * `years` is capped by two things: the career start (2002) and the year the
+ * technology itself became usable in production. Nothing here should predate
+ * the tool it describes — update against the current year when revising.
  */
 export const skillCategories: SkillCategory[] = [
   {
@@ -12,30 +16,35 @@ export const skillCategories: SkillCategory[] = [
       'The core of my practice: hand-written markup and styles that stay fast, accessible and maintainable long after launch.',
     icon: 'code',
     skills: [
-      { name: 'HTML5 & Semantic Markup', level: 98, years: 24, note: 'Accessibility-first structure' },
-      { name: 'CSS3, Flexbox & Grid', level: 97, years: 14, note: 'Modern layout without frameworks' },
-      { name: 'JavaScript (ES2023+)', level: 92, years: 14, note: 'Vanilla-first, framework-ready' },
-      { name: 'TypeScript', level: 85, years: 5, note: 'Strict mode across projects' },
-      { name: 'Tailwind CSS', level: 94, years: 5 },
-      { name: 'Bootstrap', level: 95, years: 12 },
-      { name: 'Responsive & Fluid Design', level: 97, years: 20 },
-      { name: 'Web Accessibility (WCAG)', level: 88, years: 8 },
+      {
+        name: 'HTML5 & Semantic Markup',
+        level: 98,
+        years: 16,
+        note: 'Accessibility-first structure',
+      },
+      { name: 'CSS3, Flexbox & Grid', level: 97, years: 15, note: 'Modern layout without frameworks' },
+      { name: 'JavaScript (ES2023+)', level: 92, years: 21, note: 'Vanilla-first, framework-ready' },
+      { name: 'TypeScript', level: 85, years: 7, note: 'Strict mode across projects' },
+      { name: 'Tailwind CSS', level: 94, years: 6 },
+      { name: 'Bootstrap', level: 95, years: 14 },
+      { name: 'Responsive & Fluid Design', level: 97, years: 16 },
+      { name: 'Web Accessibility (WCAG)', level: 88, years: 13 },
     ],
   },
   {
     id: 'cms',
     title: 'CMS & WordPress',
     description:
-      'Custom themes and plugins built the WordPress way — secure, update-safe and genuinely pleasant for clients to edit.',
+      'Custom themes and plugins built the WordPress way — plus flat-file Statamic builds where a database is overkill. Secure, update-safe and genuinely pleasant for clients to edit.',
     icon: 'wordpress',
     skills: [
-      { name: 'Custom Theme Development', level: 95, years: 15 },
-      { name: 'Plugin Development', level: 84, years: 12 },
-      { name: 'Gutenberg & Block Patterns', level: 82, years: 5 },
-      { name: 'ACF & Custom Post Types', level: 92, years: 10 },
-      { name: 'WooCommerce', level: 80, years: 8 },
-      { name: 'Security Hardening', level: 86, years: 10 },
-      { name: 'Speed Optimisation', level: 93, years: 10 },
+      { name: 'Custom Theme Development', level: 95, years: 20 },
+      { name: 'Plugin Development', level: 84, years: 16 },
+      { name: 'Gutenberg & Block Patterns', level: 82, years: 7 },
+      { name: 'ACF & Custom Post Types', level: 92, years: 15 },
+      { name: 'WooCommerce', level: 80, years: 13 },
+      { name: 'Statamic (Themes & Addons)', level: 80, years: 10 },
+      { name: 'Speed Optimisation', level: 93, years: 16 },
     ],
   },
   {
@@ -45,12 +54,11 @@ export const skillCategories: SkillCategory[] = [
       'Browser games that run smoothly on low-end school hardware — scene-driven architecture, tight asset budgets, no plugins.',
     icon: 'gamepad',
     skills: [
-      { name: 'Phaser 3', level: 90, years: 7 },
-      { name: 'HTML5 Canvas API', level: 88, years: 9 },
-      { name: 'Game Loop & State Management', level: 87, years: 7 },
-      { name: 'Sprite & Asset Pipelines', level: 85, years: 7 },
-      { name: 'Educational Game Design', level: 89, years: 6 },
-      { name: 'Mobile & Touch Controls', level: 86, years: 7 },
+      { name: 'Phaser 3', level: 90, years: 8 },
+      { name: 'HTML5 Canvas API', level: 88, years: 15 },
+      { name: 'Game Loop & State Management', level: 87, years: 8 },
+      { name: 'Sprite & Asset Pipelines', level: 85, years: 8 },
+      { name: 'Educational Game Design', level: 89, years: 21 },
     ],
   },
   {
@@ -60,12 +68,11 @@ export const skillCategories: SkillCategory[] = [
       'Modern build tooling and version control, applied without turning a five-page site into a distributed system.',
     icon: 'wrench',
     skills: [
-      { name: 'Git & GitHub', level: 90, years: 11 },
-      { name: 'Astro', level: 88, years: 3 },
-      { name: 'Vite', level: 85, years: 4 },
-      { name: 'npm & Package Management', level: 88, years: 10 },
-      { name: 'GitHub Actions & CI/CD', level: 78, years: 4 },
-      { name: 'AI-assisted Development', level: 88, years: 3 },
+      { name: 'Git & GitHub', level: 90, years: 13 },
+      { name: 'Astro', level: 88, years: 4 },
+      { name: 'Vite', level: 85, years: 5 },
+      { name: 'npm & Package Management', level: 88, years: 13 },
+      { name: 'AI-assisted Development', level: 88, years: 4 },
     ],
   },
   {
@@ -76,11 +83,11 @@ export const skillCategories: SkillCategory[] = [
     icon: 'palette',
     skills: [
       { name: 'UI Design', level: 90, years: 24 },
-      { name: 'Design Systems', level: 86, years: 7 },
-      { name: 'Typography & Layout', level: 88, years: 14 },
-      { name: 'Figma', level: 85, years: 6 },
+      { name: 'Design Systems', level: 86, years: 9 },
+      { name: 'Typography & Layout', level: 88, years: 22 },
+      { name: 'Figma', level: 85, years: 7 },
       { name: 'Adobe Photoshop & Illustrator', level: 88, years: 24 },
-      { name: 'Prototyping', level: 82, years: 8 },
+      { name: 'Prototyping', level: 82, years: 12 },
     ],
   },
   {
@@ -90,12 +97,11 @@ export const skillCategories: SkillCategory[] = [
       'The server-side and integration work a frontend specialist genuinely needs — enough to ship end to end.',
     icon: 'layers',
     skills: [
-      { name: 'PHP (WordPress context)', level: 82, years: 15 },
-      { name: 'REST API Integration', level: 87, years: 9 },
-      { name: 'MySQL Fundamentals', level: 74, years: 10 },
+      { name: 'PHP (WordPress context)', level: 82, years: 21 },
+      { name: 'MySQL Fundamentals', level: 74, years: 21 },
       { name: 'Static Site Architecture', level: 90, years: 5 },
-      { name: 'Hosting, DNS & SSL', level: 86, years: 12 },
-      { name: 'Performance & Core Web Vitals', level: 93, years: 8 },
+      { name: 'Hosting, DNS & SSL', level: 86, years: 20 },
+      { name: 'Performance & Core Web Vitals', level: 93, years: 6 },
     ],
   },
 ];
@@ -129,6 +135,7 @@ export const techLogos: TechLogo[] = [
   { name: 'Bootstrap', abbr: 'Bootstrap' },
   { name: 'WordPress', abbr: 'WordPress' },
   { name: 'WooCommerce', abbr: 'WooCommerce' },
+  { name: 'Statamic', abbr: 'Statamic' },
   { name: 'Astro', abbr: 'Astro' },
   { name: 'Phaser 3', abbr: 'Phaser' },
   { name: 'Node.js', abbr: 'Node' },

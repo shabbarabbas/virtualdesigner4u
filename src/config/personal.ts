@@ -43,7 +43,7 @@ export const personal = {
 
   /** Two-to-three paragraph story used on the About page. */
   story: [
-    'I started building websites in 2009, back when a "responsive" layout meant a separate mobile domain and every browser needed its own hack. That era taught me something I still design around: the web is unpredictable, and the only work that survives is work built on solid fundamentals.',
+    'I started in 2002 building interactive multimedia, then moved to the web when a "layout" still meant nested tables and every browser needed its own hack. That era taught me something I still design around: the web is unpredictable, and the only work that survives is work built on solid fundamentals.',
     'Since then I have delivered well over a hundred projects for clients across Europe, North America, the Gulf and Australia — marketing sites, WordPress platforms, custom frontends, landing pages that had to convert, and HTML5 games used in classrooms. Most arrive through referrals or repeat business, which is the metric I care about most.',
     'My approach is deliberately unglamorous. I ask what the site actually needs to achieve, remove everything that does not serve it, and build the rest properly — semantic markup, real accessibility, measured performance budgets, and code the next developer can read. Clients stay because projects ship on time and keep working long after launch.',
   ],
@@ -55,10 +55,10 @@ export const personal = {
 
 export const stats: Stat[] = [
   {
-    value: 15,
+    value: 24,
     suffix: '+',
     label: 'Years of experience',
-    description: 'Shipping production websites since 2009.',
+    description: 'Building for the web professionally since 2002.',
   },
   {
     value: 120,

@@ -14,7 +14,7 @@ export const site = {
   shortName: 'VirtualDesigner4U',
   tagline: 'Websites and browser games engineered to perform.',
   description:
-    'Shabbar Abbas is a senior web designer and developer with 15+ years of experience building high-performance websites, WordPress platforms and HTML5 games for clients worldwide.',
+    'Shabbar Abbas is a senior web designer and developer with 24+ years of experience building high-performance websites, WordPress platforms and HTML5 games for clients worldwide.',
   language: 'en',
   locale: 'en_US',
   /**
