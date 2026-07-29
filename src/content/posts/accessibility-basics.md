@@ -4,7 +4,7 @@ description: Most accessibility failures are not complex ARIA problems. They are
 publishDate: 2025-01-16
 category: Accessibility
 tags: [Accessibility, WCAG, HTML, CSS]
-cover: /images/blog/accessibility-basics.svg
+cover: /images/blog/accessibility-basics.jpg
 coverAlt: Illustration of keyboard focus moving through interface elements
 featured: false
 ---

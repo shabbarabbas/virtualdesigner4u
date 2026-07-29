@@ -4,7 +4,7 @@ description: Most WordPress performance advice is folklore. Here is what genuine
 publishDate: 2025-05-14
 category: Performance
 tags: [WordPress, Performance, Core Web Vitals, Optimization]
-cover: /images/blog/wordpress-performance.svg
+cover: /images/blog/wordpress-performance.jpg
 coverAlt: Abstract illustration of a performance waterfall chart
 featured: true
 ---

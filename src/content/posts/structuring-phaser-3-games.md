@@ -4,7 +4,7 @@ description: Most Phaser projects become unmaintainable around week eight. The f
 publishDate: 2025-03-27
 category: Game Development
 tags: [Phaser, TypeScript, Architecture, Games]
-cover: /images/blog/phaser-architecture.svg
+cover: /images/blog/phaser-architecture.jpg
 coverAlt: Diagram showing scene flow in a Phaser game architecture
 featured: true
 ---
