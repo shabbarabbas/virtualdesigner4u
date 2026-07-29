@@ -11,8 +11,8 @@ export const personal = {
   /** Shown under the name in the hero. */
   role: 'Web Designer & Frontend Developer',
   /** Longer positioning line for SEO and structured data. */
-  jobTitle: 'Senior Web Designer, Frontend Developer & HTML5 Game Developer',
-  location: 'Pakistan',
+  jobTitle: 'Senior Web Developer | UI/UX Designer | HTML5 Game Developer',
+  location: 'Islamabad, Pakistan',
   timezone: 'PKT (UTC+5)',
   email: 'hello@virtualdesigner4u.com',
   phone: '', // Optional — leave empty to hide from the contact page.
@@ -39,7 +39,7 @@ export const personal = {
 
   /** Hero paragraph. */
   intro:
-    'For over 15 years I have helped founders, agencies and educators ship websites that load fast, rank well and actually convert — plus HTML5 games that keep players coming back. No templates, no bloat, no hand-off surprises.',
+    'For over 24 years I have helped founders, agencies and educators ship websites that load fast, rank well and actually convert — plus HTML5 games that keep players coming back. No templates, no bloat, no hand-off surprises.',
 
   /** Two-to-three paragraph story used on the About page. */
   story: [
@@ -83,21 +83,39 @@ export const stats: Stat[] = [
 export const socials: SocialLink[] = [
   {
     label: 'GitHub',
-    href: 'https://github.com/shabbarabbas', // TODO
+    href: 'https://github.com/shabbarabbas',
     icon: 'github',
     handle: '@shabbarabbas',
   },
   {
     label: 'LinkedIn',
-    href: 'https://www.linkedin.com/in/shabbarabbas', // TODO
+    href: 'https://www.linkedin.com/in/shabbarabbas', 
     icon: 'linkedin',
     handle: '/in/shabbarabbas',
   },
   {
     label: 'YouTube',
-    href: 'https://www.youtube.com/@virtualdesigner4u', // TODO
+    href: 'https://www.youtube.com/@virtualdesigner4u', 
     icon: 'youtube',
     handle: '@virtualdesigner4u',
+  },
+  {
+    label: 'Twitter',
+    href: 'https://twitter.com/shabbar_abbas', 
+    icon: 'twitter',
+    handle: '@shabbar_abbas',
+  },
+  {
+    label: 'Upwork',
+    href: 'https://www.upwork.com/freelancers/~0199479e366e784efd', 
+    icon: 'briefcase',
+    handle: '@virtualdesigner4u',
+  },
+  {
+    label: 'WhatsApp',
+    href: 'https://api.whatsapp.com/send?phone=923435149816&text=Hi!%20I%20just%20visited%20your%20website%20and%20would%20like%20to%20know%20more%20about%20your%20web%20development%20services.', 
+    icon: 'phone',
+    handle: '+92 343 5149816',
   },
 ];
 

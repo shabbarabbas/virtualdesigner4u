@@ -19,7 +19,7 @@ const origin = Astro.site?.origin ?? site.url;
 
 <BaseLayout
   title="About"
-  description={`${personal.fullName} is a web designer, frontend developer and HTML5 game developer with 15+ years of experience building fast, accessible websites for clients worldwide.`}
+  description={`${personal.fullName} is a web designer, frontend developer and HTML5 game developer with 24+ years of experience building fast, accessible websites for clients worldwide.`}
   schema={[
     personSchema(origin),
     breadcrumbSchema(origin, [{ name: 'About', path: '/about' }]),
@@ -27,7 +27,7 @@ const origin = Astro.site?.origin ?? site.url;
 >
   <PageHeader
     kicker="About"
-    title="Fifteen years of building things that *stay* built"
+    title="Twenty-four years of building things that *stay* built"
     lead={personal.short}
     breadcrumbs={[{ label: 'About' }]}
   />
