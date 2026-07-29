@@ -6,7 +6,7 @@
  * Every page routes through this component via BaseLayout, so SEO stays
  * consistent and there is exactly one place to audit.
  */
-import { site, seoDefaults, analytics } from '@/config/site';
+import { site, seoDefaults, analytics, googleAnalytics } from '@/config/site';
 import { absoluteUrl, href } from '@/lib/utils';
 import { buildGraph, personSchema, websiteSchema } from '@/lib/schema';
 import type { SeoProps } from '@/types';
@@ -41,6 +41,9 @@ const metaKeywords = [...new Set([...site.keywords, ...keywords])].join(', ');
 
 // Base identity nodes appear on every page; page-specific nodes are appended.
 const jsonLd = buildGraph([personSchema(origin), websiteSchema(origin), ...schema]);
+
+const gaId = googleAnalytics.measurementId;
+const gaSrc = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(gaId)}`;
 ---
 
 <meta charset="utf-8" />
@@ -109,6 +112,38 @@ const jsonLd = buildGraph([personSchema(origin), websiteSchema(origin), ...schem
 {
   analytics.enabled && analytics.scriptSrc && (
     <script is:inline defer data-domain={analytics.domain} src={analytics.scriptSrc} />
+  )
+}
+
+<!-- Google tag (gtag.js) -->
+{
+  gaId && (
+    <Fragment>
+      <script is:inline async src={gaSrc} />
+      <script is:inline define:vars={{ gaId }}>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() {
+          dataLayer.push(arguments);
+        }
+        gtag('js', new Date());
+        gtag('config', gaId);
+
+        // The ClientRouter navigates without a full page load, so page views
+        // after the first have to be sent manually.
+        if (!window.__gaRouterBound) {
+          window.__gaRouterBound = true;
+          document.addEventListener('astro:page-load', function () {
+            if (window.__gaFirstLoadDone) {
+              gtag('event', 'page_view', {
+                page_location: window.location.href,
+                page_title: document.title,
+              });
+            }
+            window.__gaFirstLoadDone = true;
+          });
+        }
+      </script>
+    </Fragment>
   )
 }
 

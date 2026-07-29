@@ -80,6 +80,11 @@ export const analytics = {
   domain: 'virtualdesigner4u.com',
 } as const;
 
+/** Google Analytics 4. Set `measurementId` to '' to ship no tag. */
+export const googleAnalytics = {
+  measurementId: 'G-CEML121YY3',
+} as const;
+
 export const seoDefaults = {
   titleTemplate: (title: string) =>
     title === 'Home' ? `${site.brand}` : `${title} · ${site.name}`,
