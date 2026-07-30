@@ -1,10 +1,10 @@
 ---
 author: Scott Kintz
 role: Owner
-company:  SJK Enterprise LLC a Veteran Owned Company STEM Eduction
+company: SJK Enterprise LLC — a Veteran-Owned STEM Education Company
 location: Seattle, USA
 rating: 5
-featured: false
+featured: true
 order: 1
 date: 2023-05-25
 quote: Shabbar delivers scalable, user-focused solutions that balance aesthetics and performance.
