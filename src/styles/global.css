@@ -640,3 +640,79 @@
 .skip-link:focus-visible {
   inset-block-start: 1rem;
 }
+
+/* --------------------------------------------------------------------------
+   8. Cookie consent (vanilla-cookieconsent v3)
+
+   Its own `--cc-*` variables are scoped to #cc-main, so remapping them onto
+   our semantic tokens is enough to theme it. Because `--c-*` is redefined on
+   [data-theme='light'], this single block tracks both themes at runtime — the
+   library's `cc--darkmode` class is deliberately not used.
+   -------------------------------------------------------------------------- */
+#cc-main {
+  --cc-font-family: var(--font-sans);
+  --cc-modal-border-radius: 1rem;
+  --cc-btn-border-radius: 0.6rem;
+  --cc-pm-toggle-border-radius: 999px;
+  --cc-z-index: 150;
+
+  --cc-bg: var(--c-surface);
+  --cc-primary-color: var(--c-text);
+  --cc-secondary-color: var(--c-text-muted);
+  --cc-link-color: var(--c-accent);
+
+  --cc-btn-primary-bg: var(--c-accent);
+  --cc-btn-primary-color: var(--c-accent-contrast);
+  --cc-btn-primary-border-color: var(--c-accent);
+  --cc-btn-primary-hover-bg: var(--c-accent-hover);
+  --cc-btn-primary-hover-color: var(--c-accent-contrast);
+  --cc-btn-primary-hover-border-color: var(--c-accent-hover);
+
+  --cc-btn-secondary-bg: var(--c-overlay);
+  --cc-btn-secondary-color: var(--c-text);
+  --cc-btn-secondary-border-color: var(--c-line);
+  --cc-btn-secondary-hover-bg: var(--c-overlay-strong);
+  --cc-btn-secondary-hover-color: var(--c-text);
+  --cc-btn-secondary-hover-border-color: var(--c-line-strong);
+
+  --cc-separator-border-color: var(--c-line);
+  --cc-section-category-border: var(--c-line);
+
+  --cc-toggle-on-bg: var(--c-accent);
+  --cc-toggle-off-bg: var(--c-text-subtle);
+  --cc-toggle-on-knob-bg: var(--c-accent-contrast);
+  --cc-toggle-off-knob-bg: var(--c-surface);
+  --cc-toggle-enabled-icon-color: var(--c-accent-contrast);
+  --cc-toggle-disabled-icon-color: var(--c-surface);
+  --cc-toggle-readonly-bg: var(--c-overlay-strong);
+  --cc-toggle-readonly-knob-bg: var(--c-surface);
+  --cc-toggle-readonly-knob-icon-color: var(--c-text-subtle);
+
+  --cc-cookie-category-block-bg: var(--c-canvas-alt);
+  --cc-cookie-category-block-border: var(--c-line);
+  --cc-cookie-category-block-hover-bg: var(--c-overlay);
+  --cc-cookie-category-block-hover-border: var(--c-line-strong);
+  --cc-cookie-category-expanded-block-bg: transparent;
+  --cc-cookie-category-expanded-block-hover-bg: var(--c-overlay);
+
+  --cc-footer-bg: var(--c-canvas-alt);
+  --cc-footer-color: var(--c-text-muted);
+  --cc-footer-border-color: var(--c-line);
+
+  --cc-overlay-bg: rgb(0 0 0 / 0.55);
+  --cc-webkit-scrollbar-bg: var(--c-line);
+  --cc-webkit-scrollbar-hover-bg: var(--c-line-strong);
+}
+
+/* Match the elevation and heading treatment used by the rest of the site. */
+#cc-main .cm,
+#cc-main .pm {
+  border: 1px solid var(--c-line);
+  box-shadow: var(--shadow-lg);
+}
+
+#cc-main .cm__title,
+#cc-main .pm__title {
+  font-family: var(--font-display);
+  letter-spacing: -0.01em;
+}

@@ -130,6 +130,14 @@ const year = new Date().getFullYear();
           {personal.location}
         </span>
         <a href={href('/privacy')} class="transition-colors hover:text-body">Privacy Policy</a>
+        <button
+          type="button"
+          id="cookie-preferences"
+          aria-haspopup="dialog"
+          class="transition-colors hover:text-body"
+        >
+          Cookie Preferences
+        </button>
         <span class="hidden items-center gap-1.5 sm:inline-flex">
           Built with
           <a
@@ -146,3 +154,28 @@ const year = new Date().getFullYear();
     </div>
   </div>
 </footer>
+
+<script>
+  /**
+   * Reopen the cookie preferences modal.
+   *
+   * The library's built-in `data-cc="show-preferencesModal"` hook binds a
+   * direct listener during `run()`, so it would go dead once the ClientRouter
+   * swaps the footer on the first client-side navigation. A delegated listener
+   * on `document` survives every swap.
+   *
+   * Importing the module here resolves to the same chunk the integration's
+   * injected script uses, so this shares its state rather than starting a
+   * second instance. Note the ESM build exposes named exports only — its
+   * `export =` type declaration makes editors suggest a default import, which
+   * would be `undefined` at runtime.
+   */
+  import { showPreferences } from 'vanilla-cookieconsent';
+
+  document.addEventListener('click', (event) => {
+    const target = event.target as HTMLElement | null;
+    if (!target?.closest('#cookie-preferences')) return;
+
+    showPreferences();
+  });
+</script>
