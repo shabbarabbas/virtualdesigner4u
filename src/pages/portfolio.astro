@@ -4,6 +4,7 @@ import PageHeader from '@/components/sections/PageHeader.astro';
 import CTASection from '@/components/sections/CTASection.astro';
 import ProjectCard from '@/components/cards/ProjectCard.astro';
 import Icon from '@/components/ui/Icon.astro';
+import { YouTube } from 'astro-embed';
 
 import { getProjects, getProjectCategories } from '@/lib/content';
 import { site } from '@/config/site';
@@ -74,6 +75,30 @@ for (const project of projects) {
       </p>
     </div>
   </section>
+
+ 
+
+<section class="relative overflow-hidden">
+  <div
+    class="aurora bottom-0 left-1/2 h-72 w-[42rem] -translate-x-1/2"
+    aria-hidden="true"
+  >
+  </div>
+
+  <div class="shell relative">
+
+    <div class="w-full overflow-hidden rounded-[var(--radius-card)] border border-line" data-reveal style="--reveal-delay:200ms">
+      <YouTube
+        id="ffNHC3SyOco"
+        title=""
+        posterQuality="max"
+      />
+    </div>
+
+    </div>
+</section>
+
+ 
 
   <CTASection
     title="Your project could be *next*"
@@ -174,3 +199,15 @@ for (const project of projects) {
   initFilters();
   document.addEventListener('astro:page-load', initFilters);
 </script>
+
+<style>
+/* astro-embed's YouTube facade ships `max-width: 720px` on the custom element
+   itself, which a `w-full` wrapper cannot override. Its stylesheet is emitted
+   after global.css, so this needs the extra specificity of the (always present)
+   `videoid` attribute rather than a bare `lite-youtube` selector. */
+lite-youtube[videoid] {
+  max-width: none;
+  width: 100%;
+  border-radius: inherit;
+}
+</style>
