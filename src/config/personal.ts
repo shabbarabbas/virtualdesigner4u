@@ -39,7 +39,7 @@ export const personal = {
 
   /** Hero paragraph. */
   intro:
-    'For over 24 years I have helped founders, agencies and educators ship websites that load fast, rank well and actually convert — plus HTML5 games that keep players coming back. No templates, no bloat, no hand-off surprises.',
+    'With more than two decades of professional experience, I have helped founders, agencies and educators ship websites that load fast, rank well and actually convert — plus HTML5 games that keep players coming back. No templates, no bloat, no hand-off surprises.',
 
   /** Two-to-three paragraph story used on the About page. */
   story: [
