@@ -59,8 +59,11 @@ export const site = {
  */
 export const contactForm = {
   provider: 'formspree' as 'web3forms' | 'formspree' | 'formsubmit',
+  
+  // set directly https://formspree.io/f/mrenrolr as url or set PUBLIC_FORM_ENDPOINT in .env file
+  
   endpoint:
-    import.meta.env.PUBLIC_FORM_ENDPOINT ?? '',
+    import.meta.env.PUBLIC_FORM_ENDPOINT ?? 'https://formspree.io/f/mrenrolr',
   /** Subject line prefix applied to the notification email. */
   subjectPrefix: 'New enquiry from virtualdesigner4u.com',
   /** Where the user lands after a successful submit (same-site path). */
