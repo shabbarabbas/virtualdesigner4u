@@ -75,6 +75,18 @@ export const contactForm = {
   honeypot: '_gotcha',
 } as const;
 
+/**
+ * Cloudflare Turnstile (bot/spam challenge for the contact form).
+ *
+ * `siteKey` is public and safe to ship in HTML. The secret key is never used
+ * here — it's configured on the provider's dashboard (Formspree/Web3Forms)
+ * so *they* verify the token server-side; this repo never sees the secret.
+ * Leave PUBLIC_TURNSTILE_SITE_KEY unset to render the form without the widget.
+ */
+export const turnstile = {
+  siteKey: import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? '0x4AAAAAAE1RlQJn2RsFpCyN',
+} as const;
+
 /** Optional privacy-friendly analytics. Leave `enabled: false` to ship none. */
 export const analytics = {
   enabled: false,

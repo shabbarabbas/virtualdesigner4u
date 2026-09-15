@@ -12,7 +12,7 @@
  */
 import Icon from '@/components/ui/Icon.astro';
 import Button from '@/components/ui/Button.astro';
-import { site, contactForm } from '@/config/site';
+import { site, contactForm, turnstile } from '@/config/site';
 import { personal } from '@/config/personal';
 import { services as serviceOptions } from '@/config/contact-options';
 
@@ -153,6 +153,17 @@ const successUrl = new URL(successPath, site.url).href;
     <p id="message-error" class="error" data-error hidden></p>
   </div>
 
+  {
+    turnstile.siteKey && (
+      <div class="field">
+        <div class="cf-turnstile" data-sitekey={turnstile.siteKey} data-theme="auto" />
+        <p id="turnstile-error" class="error" data-error hidden>
+          Please complete the verification challenge.
+        </p>
+      </div>
+    )
+  }
+
   <div class="flex flex-col gap-4 border-t border-line pt-6 sm:flex-row sm:items-center sm:justify-between">
     <p class="flex items-center gap-2 text-[0.8rem] text-subtle">
       <Icon name="shield" size={14} class="shrink-0 text-second" />
@@ -181,6 +192,10 @@ const successUrl = new URL(successPath, site.url).href;
     </p>
   </noscript>
 </form>
+
+{turnstile.siteKey && (
+  <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+)}
 
 <style>
   .field {
@@ -363,6 +378,18 @@ const successUrl = new URL(successPath, site.url).href;
       if (!validate()) {
         setStatus('Please fix the highlighted fields and try again.', 'error');
         return;
+      }
+
+      const turnstileWidget = form.querySelector('.cf-turnstile');
+      if (turnstileWidget) {
+        const token = form.querySelector<HTMLInputElement>('[name="cf-turnstile-response"]')?.value;
+        const errorEl = document.getElementById('turnstile-error');
+        if (!token) {
+          if (errorEl) errorEl.hidden = false;
+          setStatus('Please complete the verification challenge and try again.', 'error');
+          return;
+        }
+        if (errorEl) errorEl.hidden = true;
       }
 
       const data = new FormData(form);
