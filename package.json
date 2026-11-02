@@ -15,7 +15,7 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/mdx": "^4.3.6",
+    "@astrojs/mdx": "^8.1.2",
     "@astrojs/rss": "^4.0.12",
     "@astrojs/sitemap": "^3.6.0",
     "@fontsource-variable/bricolage-grotesque": "^5.2.9",
@@ -23,9 +23,9 @@
     "@fontsource/instrument-serif": "^5.2.9",
     "@jop-software/astro-cookieconsent": "^3.0.1",
     "@tailwindcss/vite": "^4.1.18",
-    "astro": "^5.18.2",
+    "astro": "^7.4.4",
     "astro-embed": "^0.13.1",
-    "sharp": "^0.34.5",
+    "sharp": "^0.35.5",
     "tailwindcss": "^4.1.18",
     "vanilla-cookieconsent": "^3.1.0"
   },
