@@ -1,55 +1,64 @@
 media:
   input: public/images
   output: /images
+
 content:
-  - name: Faqs
+  - name: faqs
     label: Faqs
     type: collection
     path: src/content/faqs
-    filename: "{primary}.md"
     format: yaml-frontmatter
+
     fields:
       - name: author
-        label: author
+        label: Client name
         type: string
         required: true
 
       - name: role
-        label: role
-        type: text
+        label: Role
+        type: string
 
       - name: company
-        label: company
-        type: text
+        label: Company / client source
+        type: string
+
+      - name: location
+        label: Location
+        type: string
 
       - name: rating
-        label: rating
+        label: Rating
         type: number
 
       - name: featured
-        label: featured
-        type: text
+        label: Featured testimonial
+        type: boolean
 
       - name: order
-        label: order
-        type: text
+        label: Display order
+        type: number
 
       - name: project
-        label: project
-        type: text
-        
-      - name: quote
-        label: Content
-        type: rich-text
-        
+        label: Project
+        type: string
+
       - name: date
         label: Date
         type: date
-        
+
+      - name: quote
+        label: Short quote
+        type: text
+
+      - name: body
+        label: Full testimonial
+        type: rich-text
+
     view:
-      fields: [name, company, date]
-      primary: name
-      sort: [date, name]
+      primary: author
+      fields: [author, project, rating, featured, order]
+      sort: [order, author]
       default:
-        sort: date
-        order: desc
+        sort: order
+        order: asc
