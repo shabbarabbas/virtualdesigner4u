@@ -2,22 +2,42 @@ media:
   input: public/images
   output: /images
 content:
-  - name: pages
-    label: Pages
+  - name: Faqs
+    label: Faqs
     type: collection
-    path: src/content
+    path: src/content/faqs
     filename: "{primary}.md"
     format: yaml-frontmatter
     fields:
-      - name: title
-        label: Title
+      - name: author
+        label: author
         type: string
         required: true
 
-      - name: description
-        label: Description
+      - name: role
+        label: role
         type: text
 
-      - name: body
+      - name: company
+        label: company
+        type: text
+
+      - name: rating
+        label: rating
+        type: number
+
+      - name: featured
+        label: featured
+        type: text
+
+      - name: order
+        label: order
+        type: text
+
+      - name: project
+        label: project
+        type: text
+        
+      - name: quote
         label: Content
         type: rich-text
