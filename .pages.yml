@@ -133,3 +133,179 @@ content:
       default:
         sort: order
         order: asc
+
+        
+  - name: projects
+    label: Projects
+    type: collection
+    path: src/content/projects
+    format: yaml-frontmatter
+
+    fields:
+      - name: title
+        label: Project title
+        type: string
+        required: true
+
+      - name: summary
+        label: Short summary
+        type: text
+
+      - name: description
+        label: Description
+        type: text
+
+      - name: category
+        label: Category
+        type: string
+
+      - name: tags
+        label: Tags
+        type: string
+        list: true
+
+      - name: tech
+        label: Technologies
+        type: string
+        list: true
+
+      - name: client
+        label: Client
+        type: string
+
+      - name: industry
+        label: Industry
+        type: string
+
+      - name: role
+        label: Your role
+        type: string
+
+      - name: duration
+        label: Duration
+        type: string
+
+      - name: year
+        label: Year
+        type: number
+
+      - name: order
+        label: Display order
+        type: number
+
+      - name: featured
+        label: Featured project
+        type: boolean
+
+      - name: accent
+        label: Accent colour (hex)
+        type: string
+
+      - name: cover
+        label: Cover image
+        type: image
+
+      - name: coverAlt
+        label: Cover image alt text
+        type: string
+
+      - name: gallery
+        label: Project gallery
+        type: object
+        list: true
+        fields:
+          - name: src
+            label: Image
+            type: image
+
+          - name: alt
+            label: Alt text
+            type: string
+
+          - name: caption
+            label: Caption
+            type: text
+
+      - name: links
+        label: Project links
+        type: object
+        fields:
+          - name: live
+            label: Live project URL
+            type: string
+
+      - name: problem
+        label: The problem
+        type: text
+
+      - name: solution
+        label: The solution
+        type: text
+
+      - name: features
+        label: Key features
+        type: string
+        list: true
+
+      - name: challenges
+        label: Challenges
+        type: object
+        list: true
+        fields:
+          - name: title
+            label: Challenge title
+            type: string
+
+          - name: detail
+            label: Challenge details
+            type: text
+
+      - name: results
+        label: Results
+        type: object
+        list: true
+        fields:
+          - name: metric
+            label: Metric
+            type: string
+
+          - name: label
+            label: Metric label
+            type: string
+
+          - name: detail
+            label: Supporting details
+            type: text
+
+      - name: lessons
+        label: Lessons learned
+        type: string
+        list: true
+
+      - name: testimonial
+        label: Client testimonial
+        type: object
+        fields:
+          - name: quote
+            label: Quote
+            type: text
+
+          - name: author
+            label: Author
+            type: string
+
+          - name: role
+            label: Role / organisation
+            type: string
+
+      - name: body
+        label: Full case study
+        type: rich-text
+
+    view:
+      primary: title
+      fields: [title, category, year, order, featured]
+      sort: [order, title]
+      default:
+        sort: order
+        order: asc
