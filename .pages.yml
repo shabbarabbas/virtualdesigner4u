@@ -41,3 +41,15 @@ content:
       - name: quote
         label: Content
         type: rich-text
+        
+      - name: date
+        label: Date
+        type: date
+        
+view:
+  fields: [name, company, date]
+  primary: name
+  sort: [date, name]
+  default:
+    sort: date
+    order: desc
