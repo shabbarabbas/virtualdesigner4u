@@ -2,12 +2,22 @@ media:
   input: public/images
   output: /images
 content:
-  - name: src
+  - name: pages
     label: Pages
     type: collection
-    path: docs
+    path: src/pages
+    filename: "{primary}.md"
+    format: yaml-frontmatter
     fields:
       - name: title
+        label: Title
         type: string
+        required: true
+
+      - name: description
+        label: Description
+        type: text
+
       - name: body
+        label: Content
         type: rich-text
