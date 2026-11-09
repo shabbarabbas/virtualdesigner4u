@@ -309,3 +309,59 @@ content:
       default:
         sort: order
         order: asc
+
+
+  - name: blog
+    label: Blog posts
+    type: collection
+    path: src/content/blog
+    format: yaml-frontmatter
+
+    fields:
+      - name: title
+        label: Post title
+        type: string
+        required: true
+
+      - name: description
+        label: Description
+        type: text
+
+      - name: publishDate
+        label: Publish date
+        type: date
+        options:
+          format: yyyy-MM-dd
+
+      - name: category
+        label: Category
+        type: string
+
+      - name: tags
+        label: Tags
+        type: string
+        list: true
+
+      - name: cover
+        label: Cover image
+        type: image
+
+      - name: coverAlt
+        label: Cover image alt text
+        type: string
+
+      - name: featured
+        label: Featured post
+        type: boolean
+
+      - name: body
+        label: Article content
+        type: rich-text
+
+    view:
+      primary: title
+      fields: [title, publishDate, category, featured]
+      sort: [publishDate, title]
+      default:
+        sort: publishDate
+        order: desc
