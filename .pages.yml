@@ -373,45 +373,191 @@ content:
     format: json
     
     fields:
+      - name: personal
+        label: Personal information
+        type: object
+        fields:
+          - name: firstName
+            label: First name
+            type: string
 
-    - name: personal
-      label: personal
-      type: object
-      fields:
-      - name: short
-        label: short Description
+          - name: lastName
+            label: Last name
+            type: string
+
+          - name: fullName
+            label: Full name
+            type: string
+
+          - name: role
+            label: Role
+            type: string
+
+          - name: jobTitle
+            label: Job title
+            type: string
+
+          - name: location
+            label: Location
+            type: string
+
+          - name: timezone
+            label: Timezone
+            type: string
+
+          - name: email
+            label: Email address
+            type: string
+
+          - name: phone
+            label: Phone number
+            type: string
+
+          - name: photo
+            label: Profile photo
+            type: image
+
+          - name: photoAlt
+            label: Profile photo alt text
+            type: string
+
+          - name: resume
+            label: Resume URL or file path
+            type: string
+
+          - name: availability
+            label: Availability
+            type: object
+            fields:
+              - name: open
+                label: Available for new projects
+                type: boolean
+
+              - name: label
+                label: Availability label
+                type: string
+
+              - name: detail
+                label: Availability details
+                type: text
+
+          - name: responseTime
+            label: Response time
+            type: string
+
+          - name: short
+            label: Short bio
+            type: text
+
+          - name: intro
+            label: Introduction
+            type: text
+
+          - name: story
+            label: Your story — paragraphs
+            type: text
+            list: true
+
+          - name: pitch
+            label: Client pitch
+            type: text
+
+      - name: stats
+        label: Statistics
+        type: object
+        list: true
+        fields:
+          - name: value
+            label: Numeric value
+            type: number
+
+          - name: suffix
+            label: Suffix
+            type: string
+
+          - name: label
+            label: Label
+            type: string
+
+          - name: description
+            label: Description
+            type: text
+
+      - name: socials
+        label: Social links
+        type: object
+        list: true
+        fields:
+          - name: label
+            label: Platform name
+            type: string
+
+          - name: href
+            label: URL
+            type: string
+
+          - name: icon
+            label: Icon name
+            type: string
+
+          - name: handle
+            label: Display handle
+            type: string
+
+      - name: values
+        label: Values
+        type: object
+        list: true
+        fields:
+          - name: title
+            label: Title
+            type: string
+
+          - name: description
+            label: Description
+            type: text
+
+          - name: icon
+            label: Icon name
+            type: string
+
+      - name: process
+        label: Working process
+        type: object
+        list: true
+        fields:
+          - name: step
+            label: Step number
+            type: string
+
+          - name: title
+            label: Step title
+            type: string
+
+          - name: description
+            label: Description
+            type: text
+
+          - name: deliverables
+            label: Deliverables
+            type: string
+            list: true
+
+      - name: toolkit
+        label: Toolkit
+        type: object
+        list: true
+        fields:
+          - name: group
+            label: Group name
+            type: string
+
+          - name: items
+            label: Tools
+            type: string
+            list: true
+
+      - name: industries
+        label: Industries served
         type: string
-      
-      - name: intro
-        label: intro
-        type: text
-      
-      - name: story
-        label: story
-        type: text
-        
-      - name: pitch
-        label: Pitch
-        type: text
-    
-    - name: stats
-      label: stats
-      type: object
-      fields:
-        - name:  value
-          label: value
-          type: string
-        
-        - name:  suffix
-          label: suffix
-          type: string
-
-        
-        - name:  label
-          label: label
-          type: string  
-          
-        - name:  description
-          label: description
-          type: text
-
+        list: true
