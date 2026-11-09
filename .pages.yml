@@ -314,7 +314,7 @@ content:
   - name: blog
     label: Blog posts
     type: collection
-    path: src/content/blog
+    path: src/content/posts
     format: yaml-frontmatter
 
     fields:
