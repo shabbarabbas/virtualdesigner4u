@@ -29,7 +29,10 @@ content:
 
       - name: rating
         label: Rating
-        type: number
+        type: select
+        options:
+          values: [1,2,3,4,5]
+        
 
       - name: featured
         label: Featured testimonial
@@ -376,20 +379,18 @@ content:
       - name: personal
         label: Personal information
         type: object
+        readonly: true
         fields:
           - name: firstName
             label: First name
-            readonly: true
             type: string
 
           - name: lastName
             label: Last name
-            readonly: true
             type: string
 
           - name: fullName
             label: Full name
-            readonly: true
             type: string
 
           - name: role
