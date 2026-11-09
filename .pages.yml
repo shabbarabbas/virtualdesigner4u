@@ -62,3 +62,74 @@ content:
       default:
         sort: order
         order: asc
+        
+  - name: services
+    label: Services
+    type: collection
+    path: src/content/services
+    format: yaml-frontmatter
+
+    fields:
+      - name: title
+        label: Service title
+        type: string
+        required: true
+
+      - name: summary
+        label: Short summary
+        type: text
+
+      - name: description
+        label: Description
+        type: text
+
+      - name: icon
+        label: Icon name
+        type: string
+
+      - name: group
+        label: Service group
+        type: string
+
+      - name: order
+        label: Display order
+        type: number
+
+      - name: featured
+        label: Featured service
+        type: boolean
+
+      - name: startingAt
+        label: Starting price
+        type: string
+
+      - name: timeline
+        label: Estimated timeline
+        type: string
+
+      - name: benefits
+        label: Benefits
+        type: string
+        list: true
+
+      - name: technologies
+        label: Technologies
+        type: string
+        list: true
+
+      - name: deliverables
+        label: Deliverables
+        type: string
+        list: true
+
+      - name: body
+        label: Full service content
+        type: rich-text
+
+    view:
+      primary: title
+      fields: [title, group, order, featured]
+      sort: [order, title]
+      default:
+        sort: order
+        order: asc
