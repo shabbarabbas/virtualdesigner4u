@@ -1,6 +1,6 @@
 media: public
 content:
-  - name: pages
+  - name: src/pages
     label: Pages
     type: collection
     path: docs
