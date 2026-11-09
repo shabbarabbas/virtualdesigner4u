@@ -376,6 +376,7 @@ content:
       - name: personal
         label: Personal information
         type: object
+        readonly: true
         fields:
           - name: firstName
             label: First name
