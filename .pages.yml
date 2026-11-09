@@ -365,3 +365,11 @@ content:
       default:
         sort: publishDate
         order: desc
+
+  - name: site-pages-about
+    label: About Page
+    type: file
+    path: src/pages/about.astro
+    format: code
+
+        
