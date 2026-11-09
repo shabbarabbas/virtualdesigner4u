@@ -371,4 +371,47 @@ content:
     type: file
     path: src/config/personal.json
     format: json
+    
+    fields:
+
+    - name: personal
+      label: personal
+      type: object
+      fields:
+      - name: short
+        label: short Description
+        type: string
+      
+      - name: intro
+        label: intro
+        type: text
+      
+      - name: story
+        label: story
+        type: text
+        
+      - name: pitch
+        label: Pitch
+        type: text
+    
+    - name: stats
+      label: stats
+      type: object
+      fields:
+        - name:  value
+          label: value
+          type: string
+        
+        - name:  suffix
+          label: suffix
+          type: string
+
+        
+        - name:  label
+          label: label
+          type: string  
+          
+        - name:  description
+          label: description
+          type: text
 
