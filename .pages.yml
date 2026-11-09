@@ -6,7 +6,7 @@ content:
   - name: faqs
     label: Faqs
     type: collection
-    path: src/content/faqs
+    path: src/content/testimonials
     format: yaml-frontmatter
 
     fields:
