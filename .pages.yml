@@ -366,12 +366,6 @@ content:
         sort: publishDate
         order: desc
 
-  - name: site-pages-about
-    label: About Page
-    type: file
-    path: src/pages/about.astro
-    format: code
-
   - name: site-personal-settings
     label: Site Personal settings
     type: file
