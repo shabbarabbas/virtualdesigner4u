@@ -372,4 +372,9 @@ content:
     path: src/pages/about.astro
     format: code
 
-        
+  - name: site-personal-settings
+    label: Site Personal settings
+    type: file
+    path: src/config/personal.json
+    format: json
+
