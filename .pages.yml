@@ -3,8 +3,8 @@ media:
   output: /images
 
 content:
-  - name: faqs
-    label: Faqs
+  - name: testimonials
+    label: Testimonials
     type: collection
     path: src/content/testimonials
     format: yaml-frontmatter
