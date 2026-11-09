@@ -5,7 +5,7 @@ content:
   - name: pages
     label: Pages
     type: collection
-    path: src/pages
+    path: src/content
     filename: "{primary}.md"
     format: yaml-frontmatter
     fields:
